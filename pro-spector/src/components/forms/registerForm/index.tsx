@@ -9,6 +9,7 @@ import "react-toastify/dist/ReactToastify.css";
 import UserRegisterSchema from "../../../schemas/register";
 import { HomeContext } from "../../../contexts/home";
 import { useNavigate } from "react-router-dom";
+import api from "../../../services/api"
 
 const FormRegister = () => {
 
@@ -22,10 +23,21 @@ const FormRegister = () => {
     formState: { errors },
   } = useForm<iRegisterUser>({ resolver: yupResolver(UserRegisterSchema) });
 
-  const submit = (data: iRegisterUser) => {
-    console.log("This is the data to send request:");
-    console.log(data);
-    navigate("/dashboard");
+  const submit = async (data: iRegisterUser) => {
+    
+    data.admin = true;
+  
+    try {
+      const response = await api.post('/users', data);
+      console.log("Response from API:");
+      console.log(response.data);
+    } catch (error) {
+      console.error("Error making API request:", error);
+    } finally {
+      toast.success("Cadastro efetuado com sucesso")
+      ShowRegisterForm()
+    }
+  
   };
 
   return (
@@ -37,12 +49,12 @@ const FormRegister = () => {
           <label>Complete Name:</label>
           <input
             placeholder="Type here your complete name"
-            {...register("completeName")}
+            {...register("name")}
           />
         </div>
-        {errors.completeName?.message && (
+        {errors.name?.message && (
           <p className="pError" aria-label="error">
-            {errors.completeName.message}
+            {errors.name.message}
           </p>
         )}
 
@@ -56,7 +68,7 @@ const FormRegister = () => {
           </p>
         )}
 
-        <div className="divLabelAndInput">
+        {/* <div className="divLabelAndInput">
           <label>Phone:</label>
           <input placeholder="Type here your phone" {...register("phone")} />
         </div>
@@ -64,7 +76,7 @@ const FormRegister = () => {
           <p className="pError" aria-label="error">
             {errors.phone.message}
           </p>
-        )}
+        )} */}
 
         <div className="divLabelAndInput">
           <label>Password:</label>

@@ -32,12 +32,12 @@ const EditClientContactForm = () => {
           <input
             defaultValue="Gertrudes de Almeida Cruzes"
             placeholder="Type here your username"
-            {...register("completeName")}
+            {...register("name")}
           />
         </div>
-        {errors.completeName?.message && (
+        {errors.name?.message && (
           <p className="pError" aria-label="error">
-            {errors.completeName.message}
+            {errors.name.message}
           </p>
         )}
 

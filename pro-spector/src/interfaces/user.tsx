@@ -1,12 +1,12 @@
 export interface iLogin {
-  username: string;
+  email: string;
   password: string;
 }
 
 export interface iRegisterUser {
-  completeName: string;
   email: string;
-  phone: string;
+  name: string;
   password: string;
+  admin: boolean;
+  // phone: string;
 }
-

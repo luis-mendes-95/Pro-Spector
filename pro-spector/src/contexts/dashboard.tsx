@@ -56,7 +56,7 @@ export const DashboardProvider = ({ children }: iDashboardProviderProps) => {
   };
 
   const logout = (): void => {
-    console.log("deslogando sacas")
+    localStorage.setItem("prospector_user_token", "")
     navigate("/")
   }
 

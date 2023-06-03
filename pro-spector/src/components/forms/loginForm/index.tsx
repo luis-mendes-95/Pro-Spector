@@ -9,12 +9,15 @@ import "react-toastify/dist/ReactToastify.css";
 import UserLoginSchema from "../../../schemas/login";
 import { HomeContext } from "../../../contexts/home";
 import { useNavigate } from "react-router-dom";
+import api from "../../../services/api";
+import { UserContext } from "../../../contexts/user";
 
 const FormLogin = () => {
 
   const navigate = useNavigate();
 
   const { ShowLoginForm } = useContext(HomeContext)
+  const { setToken, tokenUser } = useContext(UserContext)
 
   const {
     register,
@@ -22,10 +25,27 @@ const FormLogin = () => {
     formState: { errors },
   } = useForm<iLogin>({ resolver: yupResolver(UserLoginSchema) });
 
-  const submit = (data: iLogin) => {
-    console.log('This is the data to send request:')
-    console.log(data)
-    navigate("/dashboard")
+  const submit = async (data: iLogin) => {
+  
+    try {
+      const response = await api.post('/login', data);
+
+      if (response.status === 200) {
+        setToken(response.data.token)
+        localStorage.setItem("prospector_user_token", response.data.token)
+      }
+
+    } catch (error) {
+      console.error("Error making API request:", error);
+    }   
+
+    toast.success("Login efetuado com sucesso, você será redirecionado para a Dashboard")
+
+    setTimeout(() => {
+      ShowLoginForm()
+      navigate("/dashboard")
+    }, 5000);
+
   };
 
   return (
@@ -34,15 +54,15 @@ const FormLogin = () => {
       <h2>LOGIN:</h2>
 
         <div className="divLabelAndInput">
-          <label>Username:</label>
+          <label>E-mail:</label>
           <input
-            placeholder="Type here your username"
-            {...register("username")}
+            placeholder="Type here your email"
+            {...register("email")}
           />
         </div>
-        {errors.username?.message && (
+        {errors.email?.message && (
           <p className="pError" aria-label="error">
-            {errors.username.message}
+            {errors.email.message}
           </p>
         )}
 
