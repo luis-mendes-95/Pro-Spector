@@ -11,37 +11,15 @@ import { DashboardContext } from "../../../contexts/dashboard";
 import api from "../../../services/api";
 
 const ClientDetailsForm = () => {
-  const { currentClientId } = useContext(DashboardContext);
+  const { currentClient, currentClientId, clients, contacts, conversions } = useContext(DashboardContext);
 
-  const [currentClient, setCurrentClient] = useState<any>();
+  const [currentClientConversions, setCurrentClientConversions] = useState<any>();
   const [currentClientContacts, setCurrentClientContacts] = useState<any>();
-  const [currentClientConversions, setCurrentClientConversions] =
-    useState<any>();
 
   useEffect(() => {
-    const getClients = async () => {
-      try {
-        const token = localStorage.getItem("prospector_user_token");
-        const response = await api.get("/clients", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
-        response.data.map((client: any) => {
-          if (client.id === currentClientId) {
-            setCurrentClient(client);
-          }
-          return client;
-        });
-      } catch (error) {
-        console.log(error);
-      }
-    };
-
-    getClients();
 
     const getContacts = async () => {
+
       try {
         const token = localStorage.getItem("prospector_user_token");
         const response = await api.get("/contacts", {
@@ -50,7 +28,11 @@ const ClientDetailsForm = () => {
           },
         });
 
-        setCurrentClientContacts(response.data);
+        const allContacts = response.data
+        setCurrentClientContacts(allContacts)
+
+        console.log(currentClientContacts)
+
       } catch (error) {
         console.log(error);
       }
@@ -67,7 +49,6 @@ const ClientDetailsForm = () => {
           },
         });
 
-        setCurrentClientConversions(response.data);
       } catch (error) {
         console.log(error);
       }
@@ -75,6 +56,7 @@ const ClientDetailsForm = () => {
 
     getConversions();
   }, []);
+
 
   const {
     ShowClientDetailsForm,

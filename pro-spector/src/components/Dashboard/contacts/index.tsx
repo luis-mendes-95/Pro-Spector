@@ -7,29 +7,6 @@ import { iClient } from "../../../interfaces/client";
 
 const ContactsDashboard = () => {
   
-  useEffect(() => {
-
-    const getClients = async () => {
-      try {
-        const token = localStorage.getItem("prospector_user_token");
-        const response = await api.get("/clients", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
-        setClients(response.data);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-
-    getClients();
-    
-  }, []);
-
-  const [clients, setClients] = useState<any[]>();
-
   const {
     ShowContactsDashboard,
     ShowDashboardHome,
@@ -44,7 +21,14 @@ const ContactsDashboard = () => {
     showClientDetailsForm,
 
     currentClientId,
-    SetClientId
+    currentClient,
+    SetClient,
+    SetClientId,
+
+    clients,
+    contacts,
+    conversions
+    
     
   } = useContext(DashboardContext);
 
@@ -65,19 +49,22 @@ const ContactsDashboard = () => {
         </thead>
 
         <tbody>
-          {clients?.map((client) => {
+
+          {clients?.map((client: any) => {
             return (
               <tr key={client.id}>
                 <td>{client.name}</td>
                 <td className="tdAsButton" onClick={()=>{
+                  SetClient(client)
                   SetClientId(client.id)
-                  ShowClientDetailsForm(currentClientId)
+                  ShowClientDetailsForm(client.id)
                 }}>
                   See more
                 </td>
               </tr>
             );
           })}
+
         </tbody>
       </table>
     </DashboardBackground>
