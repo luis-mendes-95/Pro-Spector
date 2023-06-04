@@ -349,9 +349,9 @@ const ClientDetailsForm = () => {
                       ShowEditConversionForm(conversion.id)
                       ShowClientDetailsForm(currentClientId)
                     }}>Edit</button>
-                    <button style={{ color: "red" }} onClick={()=>{
+                    <p style={{ color: "red" }} onClick={()=>{
                       deleteConversion(conversion.id)
-                    }}>Delete</button>
+                    }}>Delete</p>
                   </div>
                 </li>
               );

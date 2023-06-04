@@ -13,7 +13,7 @@ import api from "../../../services/api";
 
 const EditConversionForm = () => {
 
-  const { currentConversionId, setConversionsByRequest, conversions, SetConversion, currentConversion, ShowClientDetailsForm, currentClientId } = useContext(DashboardContext)
+  const { currentConversionId, setConversionsByRequest, ShowEditConversionForm, conversions, SetConversion, currentConversion, ShowClientDetailsForm, currentClientId } = useContext(DashboardContext)
 
   useEffect(() => {
 
@@ -46,8 +46,6 @@ const EditConversionForm = () => {
 
   }, []);
 
-  const { ShowEditConversionForm } = useContext(DashboardContext);
-
   const thisConversion = currentConversion
 
   const {
@@ -56,9 +54,62 @@ const EditConversionForm = () => {
     formState: { errors },
   } = useForm<iConversion>({ resolver: yupResolver(ConversionSchema) });
 
-  const submit = (data: iConversion) => {
-    console.log("This is the data to send request:");
-    console.log(data);
+  const submit = async (data: any) => {
+
+    let dataString = new Date().toLocaleDateString('en-US').replace(/\//g, '-');
+
+    data.createdAt = currentConversion.createdAt
+    data.updatedAt = dataString
+    data.deletedAt = ""
+    data.clientId = currentClientId
+ 
+    try {
+      const token = localStorage.getItem("prospector_user_token");
+  
+      const response = await api.patch(`/conversions/${currentConversionId}`, data, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      console.log(response.status)
+
+      if (response.status === 200) {
+        toast.success("Conversão editada com sucesso!")
+
+        try {
+          const token = localStorage.getItem("prospector_user_token");
+
+          const response = await api.get("/conversions", {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+  
+          setConversionsByRequest(response.data)
+  
+        } catch (error) {
+          console.log(error);
+        }
+
+      }
+
+    } catch (error: any) {
+      if (error) {
+        console.log(error)
+        toast.error("ops! Alguma coisa está errada! Atualize a página e tente novamente!")
+      }
+    } 
+
+    setTimeout(() => {
+      ShowEditConversionForm(currentConversionId)
+    }, 2000);
+
+    SetConversion("")
+
+    ShowClientDetailsForm(currentClientId)
+    
+
   };
 
   return (
