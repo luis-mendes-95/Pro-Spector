@@ -18,7 +18,7 @@ const EditClientContactForm = () => {
   useEffect(() => {
 
     contacts.map((contact: any) => {
-      if (contact.id === currentClientId) {
+      if (contact.client.id === currentClientId) {
         SetContact(contact)
       }
     })
@@ -29,7 +29,7 @@ const EditClientContactForm = () => {
   const { register, handleSubmit, formState: { errors }, } = 
   useForm<iClientContact>({ resolver: yupResolver(ClientContactEditSchema) });
 
-  const submit = async (data: iClientContact) => {
+  const submit = async (data: any) => {
 
     if (data.name === "") {
       data.name = currentContact.name
@@ -93,6 +93,8 @@ const EditClientContactForm = () => {
     ShowClientDetailsForm(currentClientId)
     
   };
+
+  console.log(contacts)
 
   return (
     <Modal>
