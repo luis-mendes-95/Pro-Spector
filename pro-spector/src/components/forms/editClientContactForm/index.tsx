@@ -6,7 +6,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { toast } from "react-toastify";
 import { iClientContact } from "../../../interfaces/client";
 import "react-toastify/dist/ReactToastify.css";
-import { ClientContactSchema } from "../../../schemas/client";
+import { ClientContactEditSchema } from "../../../schemas/client";
 import { DashboardContext } from "../../../contexts/dashboard";
 import { useNavigate } from "react-router-dom";
 import api from "../../../services/api";
@@ -27,14 +27,72 @@ const EditClientContactForm = () => {
   
 
   const { register, handleSubmit, formState: { errors }, } = 
-  useForm<iClientContact>({ resolver: yupResolver(ClientContactSchema) });
+  useForm<iClientContact>({ resolver: yupResolver(ClientContactEditSchema) });
 
-  const submit = (data: iClientContact) => {
-    console.log("This is the data to send request:");
-    console.log(data);
+  const submit = async (data: iClientContact) => {
+
+    if (data.name === "") {
+      data.name = currentContact.name
+    }
+
+    if (data.email === "") {
+      data.email = currentContact.email
+    }
+
+    let dataString = new Date().toLocaleDateString('en-US').replace(/\//g, '-');
+
+    data.createdAt = currentContact.createdAt
+    data.updatedAt = dataString
+    data.deletedAt = ""
+    data.clientId = currentClientId
+ 
+    try {
+      const token = localStorage.getItem("prospector_user_token");
+  
+      const response = await api.patch(`/contacts/${currentContact.id}`, data, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      console.log(response.status)
+
+      if (response.status === 200) {
+        toast.success("Contato editado com sucesso!")
+
+        try {
+          const token = localStorage.getItem("prospector_user_token");
+
+          const response = await api.get("/contacts", {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+  
+          setContactsByRequest(response.data)
+  
+        } catch (error) {
+          console.log(error);
+        }
+
+      }
+
+    } catch (error: any) {
+      if (error) {
+        console.log(error)
+        toast.error("ops! Alguma coisa está errada! Atualize a página e tente novamente!")
+      }
+    } 
+
+    setTimeout(() => {
+      ShowEditClientContactForm(currentContactId)
+    }, 2000);
+
+    SetContact("")
+
+    ShowClientDetailsForm(currentClientId)
+    
   };
-
-  console.log(currentContact)
 
   return (
     <Modal>

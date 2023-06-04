@@ -288,6 +288,7 @@ const ClientDetailsForm = () => {
                     <p
                       onClick={() => {
                         ShowEditClientContactForm(contact.id);
+                        ShowClientDetailsForm(currentClientId)
                       }}
                     >
                       Edit
