@@ -13,11 +13,10 @@ import api from "../../../services/api";
 import { UserContext } from "../../../contexts/user";
 
 const FormLogin = () => {
-
   const navigate = useNavigate();
 
-  const { ShowLoginForm } = useContext(HomeContext)
-  const { setToken, tokenUser } = useContext(UserContext)
+  const { ShowLoginForm } = useContext(HomeContext);
+  const { setToken, tokenUser } = useContext(UserContext);
 
   const {
     register,
@@ -26,39 +25,34 @@ const FormLogin = () => {
   } = useForm<iLogin>({ resolver: yupResolver(UserLoginSchema) });
 
   const submit = async (data: iLogin) => {
-  
     try {
-      const response = await api.post('/login', data);
+      const response = await api.post("/login", data);
 
       if (response.status === 200) {
-        setToken(response.data.token)
-        localStorage.setItem("prospector_user_token", response.data.token)
+        setToken(response.data.token);
+        localStorage.setItem("prospector_user_token", response.data.token);
+        toast.success(
+          "Login efetuado com sucesso, você será redirecionado para a Dashboard"
+        );
+        setTimeout(() => {
+          ShowLoginForm();
+          navigate("/dashboard");
+        }, 5000);
       }
-
     } catch (error) {
       console.error("Error making API request:", error);
-    }   
-
-    toast.success("Login efetuado com sucesso, você será redirecionado para a Dashboard")
-
-    setTimeout(() => {
-      ShowLoginForm()
-      navigate("/dashboard")
-    }, 5000);
-
+      toast.error("ops! alguma coisa deu errado! atualize a página e tente novamente!")
+    }
   };
 
   return (
     <Modal>
       <FormStyle onSubmit={handleSubmit(submit)}>
-      <h2>LOGIN:</h2>
+        <h2>LOGIN:</h2>
 
         <div className="divLabelAndInput">
           <label>E-mail:</label>
-          <input
-            placeholder="Type here your email"
-            {...register("email")}
-          />
+          <input placeholder="Type here your email" {...register("email")} />
         </div>
         {errors.email?.message && (
           <p className="pError" aria-label="error">
@@ -88,7 +82,6 @@ const FormLogin = () => {
             Close
           </button>
         </div>
-
       </FormStyle>
     </Modal>
   );

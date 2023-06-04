@@ -1,9 +1,34 @@
-import { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 import { DashboardBackground } from "../../../styles/main";
 import { DashboardContext } from "../../../contexts/dashboard";
 import AddClientForm from "../../forms/addClientForm";
+import api from "../../../services/api";
+import { iClient } from "../../../interfaces/client";
 
 const ContactsDashboard = () => {
+  
+  useEffect(() => {
+
+    const getClients = async () => {
+      try {
+        const token = localStorage.getItem("prospector_user_token");
+        const response = await api.get("/clients", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        setClients(response.data);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    getClients();
+    
+  }, []);
+
+  const [clients, setClients] = useState<any[]>();
 
   const {
     ShowContactsDashboard,
@@ -16,39 +41,44 @@ const ContactsDashboard = () => {
     ShowAddClientForm,
     ShowClientDetailsForm,
     showAddClientForm,
-    showClientDetailsForm
+    showClientDetailsForm,
+
+    currentClientId,
+    SetClientId
     
   } = useContext(DashboardContext);
 
   return (
     <DashboardBackground>
-
       <table>
-
         <thead>
           <tr>
             <th>Clients:</th>
-            <button style={{backgroundColor:"green", color:"white"}} onClick={ShowAddClientForm}>Add new</button>
+            <td
+              className="tdAsButton"
+              style={{ backgroundColor: "green", color: "white" }}
+              onClick={ShowAddClientForm}
+            >
+              Add new
+            </td>
           </tr>
         </thead>
 
         <tbody>
-          <tr>
-            <td>Coca-Cola Company</td>
-            <button onClick={ShowClientDetailsForm}>See more</button>
-          </tr>
-
-          <tr>
-            <td>Tesla Automotives</td>
-            <button>See more</button>
-          </tr>
-
-          <tr>
-            <td>Reynholm Industries</td>
-            <button>See more</button>
-          </tr>
+          {clients?.map((client) => {
+            return (
+              <tr key={client.id}>
+                <td>{client.name}</td>
+                <td className="tdAsButton" onClick={()=>{
+                  SetClientId(client.id)
+                  ShowClientDetailsForm(currentClientId)
+                }}>
+                  See more
+                </td>
+              </tr>
+            );
+          })}
         </tbody>
-
       </table>
     </DashboardBackground>
   );

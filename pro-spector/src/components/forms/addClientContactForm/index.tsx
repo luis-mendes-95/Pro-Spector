@@ -60,6 +60,7 @@ const AddClientContactForm = () => {
 
     setTimeout(() => {
       ShowAddClientContactForm()
+      ShowClientDetailsForm(1)
     }, 2000);
 
   };
