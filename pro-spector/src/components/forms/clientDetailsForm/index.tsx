@@ -157,6 +157,41 @@ const ClientDetailsForm = () => {
 
   }
 
+  const deleteContact = async (id: number) => {
+    
+    try {
+      const token = localStorage.getItem("prospector_user_token");
+      const response = await api.delete(`/contacts/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (response.status === 204) {
+        toast.success("Contato deletado com sucesso!");
+
+        try {
+          const token = localStorage.getItem("prospector_user_token");
+          const response = await api.get("/contacts", {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+  
+          const allContacts = response.data
+          setCurrentClientContacts(allContacts)  
+        } catch (error) {
+          console.log(error);
+        }
+
+      }
+    
+    } catch (error) {
+      console.log(error);
+    }
+
+  }
+
   return (
     <Modal>
       <FormStyle onSubmit={handleSubmit(submit)}>
@@ -257,7 +292,9 @@ const ClientDetailsForm = () => {
                     >
                       Edit
                     </button>
-                    <button style={{ color: "red" }}>Delete</button>
+                    <p style={{ color: "red" }} onClick={()=>{
+                      deleteContact(contact.id)
+                    }}>Delete</p>
                   </div>
                 </li>
               );
