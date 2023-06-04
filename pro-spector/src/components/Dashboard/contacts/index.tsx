@@ -27,7 +27,8 @@ const ContactsDashboard = () => {
 
     clients,
     contacts,
-    conversions
+    conversions,
+    setClientsByRequest
     
     
   } = useContext(DashboardContext);

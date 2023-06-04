@@ -15,7 +15,7 @@ const AddClientForm = () => {
   const navigate = useNavigate();
 
   const {
-    ShowAddClientForm,    ShowClientDetailsForm,    showAddClientForm,    showClientDetailsForm,
+    setClientsByRequest, ShowAddClientForm, ShowClientDetailsForm, showAddClientForm, showClientDetailsForm,
   } = useContext(DashboardContext);
 
   const {
@@ -45,6 +45,21 @@ const AddClientForm = () => {
 
       if (response.status === 201) {
         toast.success("Cliente cadastrado com sucesso!")
+
+        try {
+          const token = localStorage.getItem("prospector_user_token");
+          const response = await api.get("/clients", {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+  
+          setClientsByRequest(response.data)
+  
+        } catch (error) {
+          console.log(error);
+        }
+
       }
 
     } catch (error: any) {
