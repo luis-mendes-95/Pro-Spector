@@ -17,7 +17,8 @@ const AddClientContactForm = () => {
 
   const {
     ShowAddClientForm,    ShowClientDetailsForm,    showAddClientForm,    showClientDetailsForm,
-    ShowAddClientContactForm, showAddClientContactForm
+    ShowAddClientContactForm, showAddClientContactForm,
+     currentClientId
   } = useContext(DashboardContext);
 
   const {
@@ -28,7 +29,7 @@ const AddClientContactForm = () => {
 
   const submit = async (data: iClientContact) => {
 
-    data.clientId = 1 //tornar dinâmico
+    data.clientId = currentClientId
 
     let dataString = new Date().toLocaleDateString('en-US').replace(/\//g, '-');
 

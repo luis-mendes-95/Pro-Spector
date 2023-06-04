@@ -9,38 +9,25 @@ import "react-toastify/dist/ReactToastify.css";
 import { ClientSchema, ClientContactSchema } from "../../../schemas/client";
 import { DashboardContext } from "../../../contexts/dashboard";
 import api from "../../../services/api";
+import { useNavigate } from "react-router-dom";
 
 const ClientDetailsForm = () => {
-  const { currentClientId } = useContext(DashboardContext);
+  const navigate = useNavigate();
 
-  const [currentClient, setCurrentClient] = useState<any>();
-  const [currentClientContacts, setCurrentClientContacts] = useState<any>();
+  const {
+    setClientsByRequest,
+    currentClient,
+    currentClientId,
+    clients,
+    contacts,
+    conversions,
+  } = useContext(DashboardContext);
+
   const [currentClientConversions, setCurrentClientConversions] =
     useState<any>();
+  const [currentClientContacts, setCurrentClientContacts] = useState<any>();
 
   useEffect(() => {
-    const getClients = async () => {
-      try {
-        const token = localStorage.getItem("prospector_user_token");
-        const response = await api.get("/clients", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
-        response.data.map((client: any) => {
-          if (client.id === currentClientId) {
-            setCurrentClient(client);
-          }
-          return client;
-        });
-      } catch (error) {
-        console.log(error);
-      }
-    };
-
-    getClients();
-
     const getContacts = async () => {
       try {
         const token = localStorage.getItem("prospector_user_token");
@@ -50,7 +37,8 @@ const ClientDetailsForm = () => {
           },
         });
 
-        setCurrentClientContacts(response.data);
+        const allContacts = response.data;
+        setCurrentClientContacts(allContacts);
       } catch (error) {
         console.log(error);
       }
@@ -67,7 +55,8 @@ const ClientDetailsForm = () => {
           },
         });
 
-        setCurrentClientConversions(response.data);
+        const allConversions = response.data;
+        setCurrentClientConversions(allConversions);
       } catch (error) {
         console.log(error);
       }
@@ -90,9 +79,144 @@ const ClientDetailsForm = () => {
     formState: { errors },
   } = useForm<iClient>({ resolver: yupResolver(ClientSchema) });
 
-  const submit = (data: iClient) => {
-    console.log("This is the data to send request:");
-    console.log(data);
+  const submit = async (data: iClient) => {
+    let dataString = new Date().toLocaleDateString("en-US").replace(/\//g, "-");
+
+    data.createdAt = currentClient.createdAt;
+    data.updatedAt = dataString;
+    data.deletedAt = "";
+
+    try {
+      const token = localStorage.getItem("prospector_user_token");
+
+      const response = await api.patch(`/clients/${currentClientId}`, data, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      console.log(response.status);
+
+      if (response.status === 200) {
+        toast.success("Cliente editado com sucesso!");
+
+        try {
+          const token = localStorage.getItem("prospector_user_token");
+          const response = await api.get("/clients", {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+
+          setClientsByRequest(response.data);
+        } catch (error) {
+          console.log(error);
+        }
+      }
+    } catch (error: any) {
+      if (error) {
+        console.log(error);
+        toast.error(
+          "ops! Alguma coisa está errada! Atualize a página e tente novamente!"
+        );
+      }
+    } finally {
+      navigate("/dashboard");
+    }
+  };
+
+  const deleteConversion = async (id: number) => {
+    try {
+      const token = localStorage.getItem("prospector_user_token");
+      const response = await api.delete(`/conversions/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (response.status === 204) {
+        toast.success("Conversão deletada com sucesso!");
+
+        try {
+          const token = localStorage.getItem("prospector_user_token");
+          const response = await api.get("/conversions", {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+
+          const allConversions = response.data;
+          setCurrentClientConversions(allConversions);
+        } catch (error) {
+          console.log(error);
+        }
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const deleteClient = async (id: number) => {
+    try {
+      const token = localStorage.getItem("prospector_user_token");
+      const response = await api.delete(`/clients/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (response.status === 204) {
+        toast.success("Cliente deletado com sucesso!");
+
+        try {
+          const token = localStorage.getItem("prospector_user_token");
+          const response = await api.get("/clients", {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+
+          const allClients = response.data;
+          setClientsByRequest(allClients);
+          ShowClientDetailsForm(currentClientId);
+        } catch (error) {
+          console.log(error);
+        }
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const deleteContact = async (id: number) => {
+    try {
+      const token = localStorage.getItem("prospector_user_token");
+      const response = await api.delete(`/contacts/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (response.status === 204) {
+        toast.success("Contato deletado com sucesso!");
+
+        try {
+          const token = localStorage.getItem("prospector_user_token");
+          const response = await api.get("/contacts", {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+
+          const allContacts = response.data;
+          setCurrentClientContacts(allContacts);
+        } catch (error) {
+          console.log(error);
+        }
+      }
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
@@ -173,7 +297,7 @@ const ClientDetailsForm = () => {
           </div>
 
           {currentClientContacts?.map((contact: any) => {
-            if (contact.client.id === currentClientId) {
+            if (contact.client?.id === currentClientId) {
               return (
                 <li key={contact.id}>
                   <h4>{contact.name}</h4>
@@ -188,14 +312,22 @@ const ClientDetailsForm = () => {
                       width: "50%",
                     }}
                   >
-                    <button
+                    <p
                       onClick={() => {
                         ShowEditClientContactForm(contact.id);
+                        ShowClientDetailsForm(currentClientId);
                       }}
                     >
                       Edit
-                    </button>
-                    <button style={{ color: "red" }}>Delete</button>
+                    </p>
+                    <p
+                      style={{ color: "red" }}
+                      onClick={() => {
+                        deleteContact(contact.id);
+                      }}
+                    >
+                      Delete
+                    </p>
                   </div>
                 </li>
               );
@@ -237,7 +369,9 @@ const ClientDetailsForm = () => {
                   {/* <p style={{ color: "orange", fontWeight: "bold" }}>
                     In Progress...
                   </p> */}
-                  <p style={{ fontSize: "10pt" }}>Process Started {conversion.createdAt}</p>
+                  <p style={{ fontSize: "10pt" }}>
+                    Process Started {conversion.createdAt}
+                  </p>
                   <p>{conversion.details}</p>
                   <div
                     style={{
@@ -246,10 +380,22 @@ const ClientDetailsForm = () => {
                       width: "50%",
                     }}
                   >
-                    <button onClick={()=>{
-                      ShowEditConversionForm(conversion.id)
-                    }}>Edit</button>
-                    <button style={{ color: "red" }}>Delete</button>
+                    <button
+                      onClick={() => {
+                        ShowEditConversionForm(conversion.id);
+                        ShowClientDetailsForm(currentClientId);
+                      }}
+                    >
+                      Edit
+                    </button>
+                    <p
+                      style={{ color: "red" }}
+                      onClick={() => {
+                        deleteConversion(conversion.id);
+                      }}
+                    >
+                      Delete
+                    </p>
                   </div>
                 </li>
               );
@@ -257,7 +403,7 @@ const ClientDetailsForm = () => {
           })}
         </ul>
 
-        <div className="DivButtonsReg">
+        <div className="DivButtonsReg" style={{display: "flex"}}>
           <button type="submit" className="buttonSaveReg">
             Save
           </button>
@@ -269,6 +415,16 @@ const ClientDetailsForm = () => {
             className="buttonCancelReg"
           >
             Close
+          </button>
+
+          <button
+            style={{ backgroundColor: "orangered", color: "white" }}
+            onClick={() => {
+              ShowClientDetailsForm(currentClientId)
+              deleteClient(currentClientId);
+            }}
+          >
+            Delete
           </button>
         </div>
       </FormStyle>

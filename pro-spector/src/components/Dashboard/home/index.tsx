@@ -1,7 +1,11 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import api from "../../../services/api";
+import { DashboardContext } from "../../../contexts/dashboard";
 
 const DashboardHome = () => {
+
+  const { setClientsByRequest, setContactsByRequest, setConversionsByRequest,
+          clients, contacts, conversions } = useContext(DashboardContext)
 
   useEffect(() => {
     const getClients = async () => {
@@ -13,6 +17,7 @@ const DashboardHome = () => {
           },
         });
 
+        setClientsByRequest(response.data)
         setQtyClients(response.data.length)
 
       } catch (error) {
@@ -31,6 +36,7 @@ const DashboardHome = () => {
           },
         });
 
+        setContactsByRequest(response.data)
         setQtyContacts(response.data.length)
 
       } catch (error) {
@@ -49,6 +55,7 @@ const DashboardHome = () => {
           },
         });
 
+        setConversionsByRequest(response.data)
         setQtyConversions(response.data.length)
 
       } catch (error) {

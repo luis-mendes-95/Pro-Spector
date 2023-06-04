@@ -13,7 +13,7 @@ import api from "../../../services/api";
 
 const AddConversionForm = () => {
   
-  const { ShowAddConversionForm, ShowClientDetailsForm } = useContext(DashboardContext);
+  const { currentClientId, ShowAddConversionForm, ShowClientDetailsForm } = useContext(DashboardContext);
 
   const {
     register,
@@ -23,7 +23,7 @@ const AddConversionForm = () => {
 
   const submit = async (data: iConversion) => {
 
-    data.clientId = 1 //tornar dinâmico
+    data.clientId = currentClientId
 
     let dataString = new Date().toLocaleDateString('en-US').replace(/\//g, '-');
 
