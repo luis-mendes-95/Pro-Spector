@@ -27,7 +27,13 @@ interface iDashboardProviderFunctions {
   SetConversionId: (id: number) => void;
   currentClientId: number,
   currentContactId: number,
-  currentConversionId: number
+  currentConversionId: number,
+  setClientsByRequest: (data: any) => void;
+  setContactsByRequest: (data: any) => void;
+  setConversionsByRequest: (data: any) => void;
+  clients: any,
+  conversions: any,
+  contacts: any
 }
 
 interface iDashboardProviderProps {
@@ -39,22 +45,35 @@ export const DashboardContext = createContext<iDashboardProviderFunctions>(
 );
 
 export const DashboardProvider = ({ children }: iDashboardProviderProps) => {
+
   const [showDashboardHome, setShowDashboardHome] = useState(true);
   const [showContactsDashboard, setShowContactsDashboard] = useState(false);
   const [showAddClientForm, setShowAddClientForm] = useState(false);
   const [showClientDetailsForm, setShowClientDetailsForm] = useState(false);
-  const [showAddClientContactForm, setShowAddClientContactForm] =
-    useState(false);
-  const [showEditClientContactForm, setShowEditClientContactForm] =
-    useState(false);
+  const [showAddClientContactForm, setShowAddClientContactForm] = useState(false);
+  const [showEditClientContactForm, setShowEditClientContactForm] = useState(false);
   const [showAddConversionForm, setShowAddConversionForm] = useState(false);
   const [showEditConversionForm, setShowEditConversionForm] = useState(false);
-
   const [currentClientId, setCurrentClientId] = useState<number>(0);
   const [currentContactId, setCurrentContactId] = useState<number>(0);
   const [currentConversionId, setCurrentConversionId] = useState<number>(0);
+  const [clients, setClients] = useState([])
+  const [conversions, setConversions] = useState([])
+  const [contacts, setContacts] = useState([])
 
   const navigate = useNavigate();
+
+  const setClientsByRequest = (data: any) => {
+    setClients(data)
+  }
+
+  const setConversionsByRequest = (data: any) => {
+    setConversions(data)
+  }
+
+  const setContactsByRequest = (data: any) => {
+    setContacts(data)
+  }
 
   const ShowDashboardHome = (): void => {
     setShowContactsDashboard(false);
@@ -132,7 +151,13 @@ export const DashboardProvider = ({ children }: iDashboardProviderProps) => {
         currentConversionId,
         SetClientId,
         SetContactId,
-        SetConversionId
+        SetConversionId,
+        setClientsByRequest,
+        setContactsByRequest,
+        setConversionsByRequest,
+        clients,
+        contacts, 
+        conversions
       }}
     >
       {children}
