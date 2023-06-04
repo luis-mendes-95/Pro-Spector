@@ -33,6 +33,11 @@ const ContactsDashboard = () => {
     
   } = useContext(DashboardContext);
 
+  useEffect(() => {
+    
+  }, [clients])
+  
+
   return (
     <DashboardBackground>
       <table>

@@ -17,7 +17,7 @@ const AddClientForm = () => {
   const {
     setClientsByRequest, ShowAddClientForm, ShowClientDetailsForm, showAddClientForm, showClientDetailsForm,
   } = useContext(DashboardContext);
-
+ 
   const {
     register,
     handleSubmit,

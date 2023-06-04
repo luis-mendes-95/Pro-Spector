@@ -9,17 +9,26 @@ import "react-toastify/dist/ReactToastify.css";
 import { ClientSchema, ClientContactSchema } from "../../../schemas/client";
 import { DashboardContext } from "../../../contexts/dashboard";
 import api from "../../../services/api";
+import { useNavigate } from "react-router-dom";
 
 const ClientDetailsForm = () => {
-  const { setClientsByRequest, currentClient, currentClientId, clients, contacts, conversions } = useContext(DashboardContext);
+  const navigate = useNavigate();
 
-  const [currentClientConversions, setCurrentClientConversions] = useState<any>();
+  const {
+    setClientsByRequest,
+    currentClient,
+    currentClientId,
+    clients,
+    contacts,
+    conversions,
+  } = useContext(DashboardContext);
+
+  const [currentClientConversions, setCurrentClientConversions] =
+    useState<any>();
   const [currentClientContacts, setCurrentClientContacts] = useState<any>();
 
   useEffect(() => {
-
     const getContacts = async () => {
-
       try {
         const token = localStorage.getItem("prospector_user_token");
         const response = await api.get("/contacts", {
@@ -28,13 +37,11 @@ const ClientDetailsForm = () => {
           },
         });
 
-        const allContacts = response.data
-        setCurrentClientContacts(allContacts)
-
+        const allContacts = response.data;
+        setCurrentClientContacts(allContacts);
       } catch (error) {
         console.log(error);
       }
-
     };
 
     getContacts();
@@ -48,18 +55,15 @@ const ClientDetailsForm = () => {
           },
         });
 
-        const allConversions = response.data
-        setCurrentClientConversions(allConversions)
-
+        const allConversions = response.data;
+        setCurrentClientConversions(allConversions);
       } catch (error) {
         console.log(error);
       }
     };
 
     getConversions();
-    
   }, []);
-
 
   const {
     ShowClientDetailsForm,
@@ -75,13 +79,53 @@ const ClientDetailsForm = () => {
     formState: { errors },
   } = useForm<iClient>({ resolver: yupResolver(ClientSchema) });
 
-  const submit = (data: iClient) => {
-    console.log("This is the data to send request:");
-    console.log(data);
+  const submit = async (data: iClient) => {
+    let dataString = new Date().toLocaleDateString("en-US").replace(/\//g, "-");
+
+    data.createdAt = currentClient.createdAt;
+    data.updatedAt = dataString;
+    data.deletedAt = "";
+
+    try {
+      const token = localStorage.getItem("prospector_user_token");
+
+      const response = await api.patch(`/clients/${currentClientId}`, data, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      console.log(response.status);
+
+      if (response.status === 200) {
+        toast.success("Cliente editado com sucesso!");
+
+        try {
+          const token = localStorage.getItem("prospector_user_token");
+          const response = await api.get("/clients", {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+
+          setClientsByRequest(response.data);
+        } catch (error) {
+          console.log(error);
+        }
+      }
+    } catch (error: any) {
+      if (error) {
+        console.log(error);
+        toast.error(
+          "ops! Alguma coisa está errada! Atualize a página e tente novamente!"
+        );
+      }
+    } finally {
+      navigate("/dashboard");
+    }
   };
 
   const deleteConversion = async (id: number) => {
-    
     try {
       const token = localStorage.getItem("prospector_user_token");
       const response = await api.delete(`/conversions/${id}`, {
@@ -100,26 +144,19 @@ const ClientDetailsForm = () => {
               Authorization: `Bearer ${token}`,
             },
           });
-  
-          const allConversions = response.data
-          setCurrentClientConversions(allConversions)
-  
+
+          const allConversions = response.data;
+          setCurrentClientConversions(allConversions);
         } catch (error) {
           console.log(error);
         }
-
       }
-    
-
-    
     } catch (error) {
       console.log(error);
     }
-
-  }
+  };
 
   const deleteClient = async (id: number) => {
-    
     try {
       const token = localStorage.getItem("prospector_user_token");
       const response = await api.delete(`/clients/${id}`, {
@@ -138,27 +175,20 @@ const ClientDetailsForm = () => {
               Authorization: `Bearer ${token}`,
             },
           });
-  
-          const allClients = response.data
-          setClientsByRequest(allClients)
-          ShowClientDetailsForm(currentClientId)
-  
+
+          const allClients = response.data;
+          setClientsByRequest(allClients);
+          ShowClientDetailsForm(currentClientId);
         } catch (error) {
           console.log(error);
         }
-
       }
-    
-
-    
     } catch (error) {
       console.log(error);
     }
-
-  }
+  };
 
   const deleteContact = async (id: number) => {
-    
     try {
       const token = localStorage.getItem("prospector_user_token");
       const response = await api.delete(`/contacts/${id}`, {
@@ -177,20 +207,17 @@ const ClientDetailsForm = () => {
               Authorization: `Bearer ${token}`,
             },
           });
-  
-          const allContacts = response.data
-          setCurrentClientContacts(allContacts)  
+
+          const allContacts = response.data;
+          setCurrentClientContacts(allContacts);
         } catch (error) {
           console.log(error);
         }
-
       }
-    
     } catch (error) {
       console.log(error);
     }
-
-  }
+  };
 
   return (
     <Modal>
@@ -288,14 +315,19 @@ const ClientDetailsForm = () => {
                     <p
                       onClick={() => {
                         ShowEditClientContactForm(contact.id);
-                        ShowClientDetailsForm(currentClientId)
+                        ShowClientDetailsForm(currentClientId);
                       }}
                     >
                       Edit
                     </p>
-                    <p style={{ color: "red" }} onClick={()=>{
-                      deleteContact(contact.id)
-                    }}>Delete</p>
+                    <p
+                      style={{ color: "red" }}
+                      onClick={() => {
+                        deleteContact(contact.id);
+                      }}
+                    >
+                      Delete
+                    </p>
                   </div>
                 </li>
               );
@@ -337,7 +369,9 @@ const ClientDetailsForm = () => {
                   {/* <p style={{ color: "orange", fontWeight: "bold" }}>
                     In Progress...
                   </p> */}
-                  <p style={{ fontSize: "10pt" }}>Process Started {conversion.createdAt}</p>
+                  <p style={{ fontSize: "10pt" }}>
+                    Process Started {conversion.createdAt}
+                  </p>
                   <p>{conversion.details}</p>
                   <div
                     style={{
@@ -346,13 +380,22 @@ const ClientDetailsForm = () => {
                       width: "50%",
                     }}
                   >
-                    <button onClick={()=>{
-                      ShowEditConversionForm(conversion.id)
-                      ShowClientDetailsForm(currentClientId)
-                    }}>Edit</button>
-                    <p style={{ color: "red" }} onClick={()=>{
-                      deleteConversion(conversion.id)
-                    }}>Delete</p>
+                    <button
+                      onClick={() => {
+                        ShowEditConversionForm(conversion.id);
+                        ShowClientDetailsForm(currentClientId);
+                      }}
+                    >
+                      Edit
+                    </button>
+                    <p
+                      style={{ color: "red" }}
+                      onClick={() => {
+                        deleteConversion(conversion.id);
+                      }}
+                    >
+                      Delete
+                    </p>
                   </div>
                 </li>
               );
@@ -374,9 +417,14 @@ const ClientDetailsForm = () => {
             Close
           </button>
 
-          <button style={{backgroundColor: "orangered", color: "white"}} onClick={()=>{
-            deleteClient(currentClientId)
-          }}>Delete</button>
+          <button
+            style={{ backgroundColor: "orangered", color: "white" }}
+            onClick={() => {
+              deleteClient(currentClientId);
+            }}
+          >
+            Delete
+          </button>
         </div>
       </FormStyle>
     </Modal>
