@@ -30,7 +30,7 @@ const EditConversionForm = () => {
       <FormStyle onSubmit={handleSubmit(submit)}>
         <h2>EDIT CONVERSION PROCESS:</h2>
 
-        <div className="divLabelAndInput">
+        {/* <div className="divLabelAndInput">
           <label>Title:</label>
           <input
             defaultValue="400 T-Shirts to 200 employes"
@@ -42,11 +42,11 @@ const EditConversionForm = () => {
           <p className="pError" aria-label="error">
             {errors.title.message}
           </p>
-        )}
+        )} */}
 
         <div className="divLabelAndInput">
           <label>Value:</label>
-          <input placeholder="Type the value in negotiation" type="number" {...register("title")} 
+          <input placeholder="Type the value in negotiation" type="number" {...register("value")} 
             defaultValue="R$ 14.000,00"
           />
         </div>
@@ -57,18 +57,18 @@ const EditConversionForm = () => {
         )}
 
         <div className="divLabelAndInput">
-          <label>Description:</label>
-          <textarea placeholder="Fill this info with all present and future information about this negotiation" {...register("description")} 
+          <label>Details:</label>
+          <textarea placeholder="Fill this info with all present and future information about this negotiation" {...register("details")} 
             defaultValue="É torrão e chorão, mas fecha pois sabe que precisa, retornar sexta-feira dia 16 de manhã"
           />
         </div>
-        {errors.description?.message && (
+        {errors.details?.message && (
           <p className="pError" aria-label="error">
-            {errors.description.message}
+            {errors.details.message}
           </p>
         )}
 
-        <div className="divLabelAndInput">
+        {/* <div className="divLabelAndInput">
           <label>Sucess:</label>
           <input {...register("sucess")} type="checkbox" />
         </div>
@@ -76,14 +76,16 @@ const EditConversionForm = () => {
           <p className="pError" aria-label="error">
             {errors.sucess.message}
           </p>
-        )}
+        )} */}
 
         <div className="DivButtonsReg">
           <button type="submit" className="buttonSaveReg">
             Save
           </button>
 
-          <button onClick={ShowEditConversionForm} className="buttonCancelReg">
+          <button onClick={()=>{
+            ShowEditConversionForm(0)
+          }} className="buttonCancelReg">
             Close
           </button>
         </div>

@@ -24,7 +24,7 @@ const Header = () => {
 
       <button onClick={ShowDashboardHome}>🏡</button>
 
-      <button onClick={ShowContactsDashboard}>Contacts</button>
+      <button onClick={ShowContactsDashboard}>Clients</button>
 
       <button onClick={logout}>Logout</button>
     </HeaderHome>

@@ -20,6 +20,7 @@ export const UserContext = createContext<iUserProviderFunctions>(
 );
 
 export const UserProvider = ({ children }: iUserProviderProps) => {
+  
   const [UserDatabase, setUserDatabase] = useState([] as iRegisterUser[]);
   const [tokenUser, setTokenUser] = useState("");
 
@@ -29,10 +30,11 @@ export const UserProvider = ({ children }: iUserProviderProps) => {
 
   const register = (data: iRegisterUser) => {
     const newUser = {
-      completeName: data.completeName,
+      name: data.name,
       email: data.email,
-      phone: data.phone,
+      // phone: data.phone,
       password: data.password,
+      admin: data.admin
     };
 
     //REQUISIÇÃO DE POST DE USUÁRIO STAFF NA API
@@ -42,7 +44,7 @@ export const UserProvider = ({ children }: iUserProviderProps) => {
 
   const login = (data: iLogin) => {
     const loginData = {
-      username: data.username,
+      email: data.email,
       password: data.password,
     };
 

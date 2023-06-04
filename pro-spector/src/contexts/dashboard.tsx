@@ -18,10 +18,16 @@ interface iDashboardProviderFunctions {
   ShowContactsDashboard: () => void;
   ShowAddClientForm: () => void;
   ShowAddClientContactForm: () => void;
-  ShowClientDetailsForm: () => void;
-  ShowEditClientContactForm: () => void;
+  ShowClientDetailsForm: (id: number) => void;
+  ShowEditClientContactForm: (id: number) => void;
   ShowAddConversionForm: () => void;
-  ShowEditConversionForm: () => void;
+  ShowEditConversionForm: (id: number) => void;
+  SetClientId: (id: number) => void;
+  SetContactId: (id: number) => void;
+  SetConversionId: (id: number) => void;
+  currentClientId: number,
+  currentContactId: number,
+  currentConversionId: number
 }
 
 interface iDashboardProviderProps {
@@ -33,58 +39,73 @@ export const DashboardContext = createContext<iDashboardProviderFunctions>(
 );
 
 export const DashboardProvider = ({ children }: iDashboardProviderProps) => {
-    
   const [showDashboardHome, setShowDashboardHome] = useState(true);
   const [showContactsDashboard, setShowContactsDashboard] = useState(false);
   const [showAddClientForm, setShowAddClientForm] = useState(false);
   const [showClientDetailsForm, setShowClientDetailsForm] = useState(false);
-  const [showAddClientContactForm, setShowAddClientContactForm] = useState(false);
-  const [showEditClientContactForm, setShowEditClientContactForm] = useState(false);
+  const [showAddClientContactForm, setShowAddClientContactForm] =
+    useState(false);
+  const [showEditClientContactForm, setShowEditClientContactForm] =
+    useState(false);
   const [showAddConversionForm, setShowAddConversionForm] = useState(false);
   const [showEditConversionForm, setShowEditConversionForm] = useState(false);
+
+  const [currentClientId, setCurrentClientId] = useState<number>(0);
+  const [currentContactId, setCurrentContactId] = useState<number>(0);
+  const [currentConversionId, setCurrentConversionId] = useState<number>(0);
 
   const navigate = useNavigate();
 
   const ShowDashboardHome = (): void => {
-    setShowContactsDashboard(false)
-    setShowDashboardHome(true)
+    setShowContactsDashboard(false);
+    setShowDashboardHome(true);
   };
 
   const ShowContactsDashboard = (): void => {
-    setShowDashboardHome(false)
-    setShowContactsDashboard(true)
+    setShowDashboardHome(false);
+    setShowContactsDashboard(true);
   };
 
   const logout = (): void => {
-    console.log("deslogando sacas")
-    navigate("/")
-  }
+    localStorage.setItem("prospector_user_token", "");
+    navigate("/");
+  };
 
   const ShowAddClientForm = (): void => {
-    setShowAddClientForm(!showAddClientForm)
+    setShowAddClientForm(!showAddClientForm);
   };
 
   const ShowClientDetailsForm = (): void => {
-    setShowClientDetailsForm(!showClientDetailsForm)
+    setShowClientDetailsForm(!showClientDetailsForm);
   };
-  
+
   const ShowAddClientContactForm = (): void => {
-    setShowAddClientContactForm(!showAddClientContactForm)
+    setShowAddClientContactForm(!showAddClientContactForm);
   };
 
   const ShowEditClientContactForm = (): void => {
-    setShowEditClientContactForm(!showEditClientContactForm)
+    setShowEditClientContactForm(!showEditClientContactForm);
   };
 
   const ShowAddConversionForm = (): void => {
-    setShowAddConversionForm(!showAddConversionForm)
+    setShowAddConversionForm(!showAddConversionForm);
   };
 
   const ShowEditConversionForm = (): void => {
-    setShowEditConversionForm(!showEditConversionForm)
+    setShowEditConversionForm(!showEditConversionForm);
   };
 
-  
+  const SetClientId = (id: number) => {
+    setCurrentClientId(id);
+  };
+
+  const SetContactId = (id: number) => {
+    setCurrentContactId(id);
+  };
+
+  const SetConversionId = (id: number) => {
+    setCurrentConversionId(id);
+  };
 
   return (
     <DashboardContext.Provider
@@ -106,6 +127,12 @@ export const DashboardProvider = ({ children }: iDashboardProviderProps) => {
         ShowAddConversionForm,
         ShowEditConversionForm,
         logout,
+        currentClientId,
+        currentContactId,
+        currentConversionId,
+        SetClientId,
+        SetContactId,
+        SetConversionId
       }}
     >
       {children}

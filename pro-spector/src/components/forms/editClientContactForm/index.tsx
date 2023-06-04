@@ -12,7 +12,7 @@ import { useNavigate } from "react-router-dom";
 
 const EditClientContactForm = () => {
 
-  const { ShowEditClientContactForm } = useContext(DashboardContext);
+  const { ShowEditClientContactForm, currentClientId } = useContext(DashboardContext);
 
   const { register, handleSubmit, formState: { errors }, } = 
   useForm<iClientContact>({ resolver: yupResolver(ClientContactSchema) });
@@ -32,12 +32,12 @@ const EditClientContactForm = () => {
           <input
             defaultValue="Gertrudes de Almeida Cruzes"
             placeholder="Type here your username"
-            {...register("completeName")}
+            {...register("name")}
           />
         </div>
-        {errors.completeName?.message && (
+        {errors.name?.message && (
           <p className="pError" aria-label="error">
-            {errors.completeName.message}
+            {errors.name.message}
           </p>
         )}
 
@@ -75,7 +75,9 @@ const EditClientContactForm = () => {
           </button>
 
           <button
-            onClick={ShowEditClientContactForm}
+            onClick={()=>{
+              ShowEditClientContactForm(currentClientId)
+            }}
             className="buttonCancelReg"
           >
             Close

@@ -1,13 +1,18 @@
 export interface iClient {
-  completeName: string;
+  name: string;
   email: string;
   phone: string;
-  registerDate: string;
+  createdAt: string;
+  updatedAt: string;
+  deletedAt: string;
 }
 
 export interface iClientContact {
-  completeName: string;
+  clientId: number;
+  name: string;
   email: string;
   phone: string;
-  registerDate: string;
+  createdAt: string;
+  updatedAt: string;
+  deletedAt: string;
 }

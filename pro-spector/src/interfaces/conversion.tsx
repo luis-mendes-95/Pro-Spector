@@ -1,8 +1,10 @@
 export interface iConversion {
-    title: string;
-    value: number;
-    description: string;
-    sucess: boolean;
+	clientId: number,
+	details: string,
+	value: number,
+	createdAt: string,
+	updatedAt: string,
+	deletedAt: string
   }
   
   

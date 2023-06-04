@@ -9,6 +9,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { ClientSchema, ClientContactSchema } from "../../../schemas/client";
 import { DashboardContext } from "../../../contexts/dashboard";
 import { useNavigate } from "react-router-dom";
+import api from "../../../services/api";
 
 const AddClientContactForm = () => {
 
@@ -25,9 +26,43 @@ const AddClientContactForm = () => {
     formState: { errors },
   } = useForm<iClientContact>({ resolver: yupResolver(ClientContactSchema) });
 
-  const submit = (data: iClientContact) => {
-    console.log("This is the data to send request:");
-    console.log(data);
+  const submit = async (data: iClientContact) => {
+
+    data.clientId = 1 //tornar dinâmico
+
+    let dataString = new Date().toLocaleDateString('en-US').replace(/\//g, '-');
+
+    data.createdAt = dataString
+    data.updatedAt = dataString
+    data.deletedAt = ""
+ 
+    try {
+      const token = localStorage.getItem("prospector_user_token");
+  
+      const response = await api.post("/contacts", data, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      console.log(response)
+
+      if (response.status === 201) {
+        toast.success("Contato cadastrado com sucesso!")
+      }
+
+    } catch (error: any) {
+      if (error) {
+        console.log(error)
+        toast.error("ops! Alguma coisa está errada! Atualize a página e tente novamente!")
+      }
+    } 
+
+    setTimeout(() => {
+      ShowAddClientContactForm()
+      ShowClientDetailsForm(1)
+    }, 2000);
+
   };
 
   return (
@@ -39,12 +74,12 @@ const AddClientContactForm = () => {
           <label>Complete Name:</label>
           <input
             placeholder="Type here your username"
-            {...register("completeName")}
+            {...register("name")}
           />
         </div>
-        {errors.completeName?.message && (
+        {errors.name?.message && (
           <p className="pError" aria-label="error">
-            {errors.completeName.message}
+            {errors.name.message}
           </p>
         )}
 

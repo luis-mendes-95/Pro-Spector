@@ -10,6 +10,8 @@ import AddClientContactForm from "../../components/forms/addClientContactForm";
 import EditClientContactForm from "../../components/forms/editClientContactForm";
 import AddConversionForm from "../../components/forms/addConversionForm";
 import EditConversionForm from "../../components/forms/editConversionForm";
+import { useNavigate } from "react-router-dom";
+import api from "../../services/api";
 
 const Dashboard = () => {
   const {
@@ -19,8 +21,31 @@ const Dashboard = () => {
     showAddClientContactForm,
     showEditClientContactForm,
     showAddConversionForm,
-    showEditConversionForm
+    showEditConversionForm,
   } = useContext(DashboardContext);
+
+  const navigate = useNavigate()
+
+  const validateLogin = async () => {
+
+    try {
+      const token = localStorage.getItem("prospector_user_token");
+  
+      const response = await api.get("/users", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+    } catch (error: any) {
+      if (error) {
+        navigate("/")
+      }
+    } 
+
+  }
+
+  validateLogin()
 
   return (
     <div

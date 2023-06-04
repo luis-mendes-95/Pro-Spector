@@ -9,9 +9,11 @@ import "react-toastify/dist/ReactToastify.css";
 import { ConversionSchema } from "../../../schemas/conversion";
 import { DashboardContext } from "../../../contexts/dashboard";
 import { useNavigate } from "react-router-dom";
+import api from "../../../services/api";
 
 const AddConversionForm = () => {
-  const { ShowAddConversionForm } = useContext(DashboardContext);
+  
+  const { ShowAddConversionForm, ShowClientDetailsForm } = useContext(DashboardContext);
 
   const {
     register,
@@ -19,9 +21,44 @@ const AddConversionForm = () => {
     formState: { errors },
   } = useForm<iConversion>({ resolver: yupResolver(ConversionSchema) });
 
-  const submit = (data: iConversion) => {
-    console.log("This is the data to send request:");
-    console.log(data);
+  const submit = async (data: iConversion) => {
+
+    data.clientId = 1 //tornar dinâmico
+
+    let dataString = new Date().toLocaleDateString('en-US').replace(/\//g, '-');
+
+    data.createdAt = dataString
+    data.updatedAt = dataString
+    data.deletedAt = ""
+ 
+    try {
+
+      const token = localStorage.getItem("prospector_user_token");
+  
+      const response = await api.post("/conversions", data, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      console.log(response)
+
+      if (response.status === 201) {
+        toast.success("Conversão cadastrada com sucesso!")
+      }
+
+    } catch (error: any) {
+      if (error) {
+        console.log(error)
+        toast.error("ops! Alguma coisa está errada! Atualize a página e tente novamente!")
+      }
+    } 
+
+    setTimeout(() => {
+      ShowAddConversionForm()
+      ShowClientDetailsForm(1)
+    }, 2000);
+
   };
 
   return (
@@ -29,7 +66,7 @@ const AddConversionForm = () => {
       <FormStyle onSubmit={handleSubmit(submit)}>
         <h2>ADD NEW CONVERSION PROCESS:</h2>
 
-        <div className="divLabelAndInput">
+        {/* <div className="divLabelAndInput">
           <label>Title:</label>
           <input
             placeholder="Choose a title for this process"
@@ -40,11 +77,11 @@ const AddConversionForm = () => {
           <p className="pError" aria-label="error">
             {errors.title.message}
           </p>
-        )}
+        )} */}
 
         <div className="divLabelAndInput">
           <label>Value:</label>
-          <input placeholder="Type the value in negotiation" type="number" {...register("title")} />
+          <input placeholder="Type the value in negotiation" type="number" {...register("value")} />
         </div>
         {errors.value?.message && (
           <p className="pError" aria-label="error">
@@ -53,16 +90,16 @@ const AddConversionForm = () => {
         )}
 
         <div className="divLabelAndInput">
-          <label>Description:</label>
-          <textarea placeholder="Fill this info with all present and future information about this negotiation" {...register("description")} />
+          <label>Details:</label>
+          <textarea placeholder="Fill this info with all present and future information about this negotiation" {...register("details")} />
         </div>
-        {errors.description?.message && (
+        {errors.details?.message && (
           <p className="pError" aria-label="error">
-            {errors.description.message}
+            {errors.details.message}
           </p>
         )}
 
-        <div className="divLabelAndInput">
+        {/* <div className="divLabelAndInput">
           <label>Sucess:</label>
           <input {...register("sucess")} type="checkbox" />
         </div>
@@ -70,7 +107,7 @@ const AddConversionForm = () => {
           <p className="pError" aria-label="error">
             {errors.sucess.message}
           </p>
-        )}
+        )} */}
 
         <div className="DivButtonsReg">
           <button type="submit" className="buttonSaveReg">

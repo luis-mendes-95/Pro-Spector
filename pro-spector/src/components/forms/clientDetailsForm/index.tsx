@@ -1,5 +1,5 @@
 import Modal from "../../modal";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { FormStyle } from "../../../styles/main";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -8,17 +8,80 @@ import { iClient, iClientContact } from "../../../interfaces/client";
 import "react-toastify/dist/ReactToastify.css";
 import { ClientSchema, ClientContactSchema } from "../../../schemas/client";
 import { DashboardContext } from "../../../contexts/dashboard";
-import { useNavigate } from "react-router-dom";
+import api from "../../../services/api";
 
 const ClientDetailsForm = () => {
-  const navigate = useNavigate();
+  const { currentClientId } = useContext(DashboardContext);
+
+  const [currentClient, setCurrentClient] = useState<any>();
+  const [currentClientContacts, setCurrentClientContacts] = useState<any>();
+  const [currentClientConversions, setCurrentClientConversions] =
+    useState<any>();
+
+  useEffect(() => {
+    const getClients = async () => {
+      try {
+        const token = localStorage.getItem("prospector_user_token");
+        const response = await api.get("/clients", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        response.data.map((client: any) => {
+          if (client.id === currentClientId) {
+            setCurrentClient(client);
+          }
+          return client;
+        });
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    getClients();
+
+    const getContacts = async () => {
+      try {
+        const token = localStorage.getItem("prospector_user_token");
+        const response = await api.get("/contacts", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        setCurrentClientContacts(response.data);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    getContacts();
+
+    const getConversions = async () => {
+      try {
+        const token = localStorage.getItem("prospector_user_token");
+        const response = await api.get("/conversions", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        setCurrentClientConversions(response.data);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    getConversions();
+  }, []);
 
   const {
     ShowClientDetailsForm,
     ShowAddClientContactForm,
     ShowEditClientContactForm,
     ShowAddConversionForm,
-    ShowEditConversionForm
+    ShowEditConversionForm,
   } = useContext(DashboardContext);
 
   const {
@@ -39,27 +102,27 @@ const ClientDetailsForm = () => {
 
         <div className="divLabelAndInput">
           <label>Registered since:</label>
-          <input value="27/03/2007" disabled />
+          <input value={currentClient?.createdAt} disabled />
         </div>
 
         <div className="divLabelAndInput">
           <label>Complete Name:</label>
           <input
-            defaultValue="Reynhoml Industries"
+            defaultValue={currentClient?.name}
             placeholder="Type here your username"
-            {...register("completeName")}
+            {...register("name")}
           />
         </div>
-        {errors.completeName?.message && (
+        {errors.name?.message && (
           <p className="pError" aria-label="error">
-            {errors.completeName.message}
+            {errors.name.message}
           </p>
         )}
 
         <div className="divLabelAndInput">
           <label>E-mail:</label>
           <input
-            defaultValue="ReynhomlIndustries@ReynhomlIndustries.com"
+            defaultValue={currentClient?.email}
             placeholder="Type here your password"
             {...register("email")}
           />
@@ -73,7 +136,7 @@ const ClientDetailsForm = () => {
         <div className="divLabelAndInput">
           <label>Phone:</label>
           <input
-            defaultValue="+55 359 666 584"
+            defaultValue={currentClient?.phone}
             placeholder="Type here your password"
             {...register("phone")}
           />
@@ -100,74 +163,44 @@ const ClientDetailsForm = () => {
                 color: "white",
                 textShadow: "1px 1px 5px black",
               }}
-              onClick={ShowAddClientContactForm}
+              onClick={() => {
+                ShowAddClientContactForm();
+                ShowClientDetailsForm(currentClient.id);
+              }}
             >
               Add new contact
             </button>
           </div>
 
-          <li>
-            <h4>Stewart Rollinsfaustar</h4>
-            <p>+55 47 999 67 05 47</p>
-            <p>Rollins@Fauster.com</p>
-            <p>Registered since: 30/02/2016</p>
+          {currentClientContacts?.map((contact: any) => {
+            if (contact.client.id === currentClientId) {
+              return (
+                <li key={contact.id}>
+                  <h4>{contact.name}</h4>
+                  <p>{contact.phone}</p>
+                  <p>{contact.email}</p>
+                  <p>Registered since: {contact.createdAt}</p>
 
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                width: "50%",
-              }}
-            >
-              <button onClick={ShowEditClientContactForm}>Edit</button>
-              <button style={{ color: "red" }}>Delete</button>
-            </div>
-          </li>
-
-          <li>
-            <h4>Stewart Rollinsfaustar</h4>
-            <p>+55 47 999 67 05 47</p>
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                width: "50%",
-              }}
-            >
-              <button>Edit</button>
-              <button style={{ color: "red" }}>Delete</button>
-            </div>
-          </li>
-
-          <li>
-            <h4>Stewart Rollinsfaustar</h4>
-            <p>+55 47 999 67 05 47</p>
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                width: "50%",
-              }}
-            >
-              <button>Edit</button>
-              <button style={{ color: "red" }}>Delete</button>
-            </div>
-          </li>
-
-          <li>
-            <h4>Stewart Rollinsfaustar</h4>
-            <p>+55 47 999 67 05 47</p>
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                width: "50%",
-              }}
-            >
-              <button>Edit</button>
-              <button style={{ color: "red" }}>Delete</button>
-            </div>
-          </li>
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      width: "50%",
+                    }}
+                  >
+                    <button
+                      onClick={() => {
+                        ShowEditClientContactForm(contact.id);
+                      }}
+                    >
+                      Edit
+                    </button>
+                    <button style={{ color: "red" }}>Delete</button>
+                  </div>
+                </li>
+              );
+            }
+          })}
         </ul>
 
         <ul>
@@ -186,50 +219,42 @@ const ClientDetailsForm = () => {
                 color: "white",
                 textShadow: "1px 1px 5px black",
               }}
-              onClick={ShowAddConversionForm}
+              onClick={() => {
+                ShowAddConversionForm();
+                ShowClientDetailsForm(currentClient.id);
+              }}
             >
               New Conversion Process
             </button>
           </div>
 
-          <li>
-            <h4>T-shirts Uniform for 160 employess</h4>
-            <p>R$ 7.840,00</p>
-            <p style={{ color: "orange", fontWeight: "bold" }}>
-              In Progress...
-            </p>
-            <p style={{ fontSize: "10pt" }}>Process Started 01/04/2017</p>
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                width: "50%",
-              }}
-            >
-              <button onClick={ShowEditConversionForm}>Edit</button>
-              <button style={{ color: "red" }}>Delete</button>
-            </div>
-          </li>
-
-          <li>
-            <h4>15 Windbanners to 20 stores</h4>
-            <p>R$ 29.700,00</p>
-            <p style={{ color: "green", fontWeight: "bold" }}>Success</p>
-            <p style={{ fontSize: "10pt" }}>Process Started 01/05/2017</p>
-            <p style={{ fontSize: "10pt", color: "green" }}>
-              Process Succeeded 04/05/2017
-            </p>
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                width: "50%",
-              }}
-            >
-              <button>Edit</button>
-              <button style={{ color: "red" }}>Delete</button>
-            </div>
-          </li>
+          {currentClientConversions?.map((conversion: any) => {
+            if (conversion.client.id === currentClientId) {
+              return (
+                <li key={conversion.id}>
+                  {/* <h4>{}</h4> */}
+                  <p>$ {conversion.value}</p>
+                  {/* <p style={{ color: "orange", fontWeight: "bold" }}>
+                    In Progress...
+                  </p> */}
+                  <p style={{ fontSize: "10pt" }}>Process Started {conversion.createdAt}</p>
+                  <p>{conversion.details}</p>
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      width: "50%",
+                    }}
+                  >
+                    <button onClick={()=>{
+                      ShowEditConversionForm(conversion.id)
+                    }}>Edit</button>
+                    <button style={{ color: "red" }}>Delete</button>
+                  </div>
+                </li>
+              );
+            }
+          })}
         </ul>
 
         <div className="DivButtonsReg">
@@ -237,7 +262,12 @@ const ClientDetailsForm = () => {
             Save
           </button>
 
-          <button onClick={ShowClientDetailsForm} className="buttonCancelReg">
+          <button
+            onClick={() => {
+              ShowClientDetailsForm(currentClient.id);
+            }}
+            className="buttonCancelReg"
+          >
             Close
           </button>
         </div>
