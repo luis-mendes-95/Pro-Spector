@@ -95,8 +95,6 @@ const ClientDetailsForm = () => {
         },
       });
 
-      console.log(response.status);
-
       if (response.status === 200) {
         toast.success("Cliente editado com sucesso!");
 

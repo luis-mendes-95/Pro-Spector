@@ -58,6 +58,14 @@ const EditConversionForm = () => {
 
     let dataString = new Date().toLocaleDateString('en-US').replace(/\//g, '-');
 
+    if (data.value === "") {
+      data.value = currentConversion.value
+    }
+
+    if (data.details === "") {
+      data.details = currentConversion.details
+    }
+
     data.createdAt = currentConversion.createdAt
     data.updatedAt = dataString
     data.deletedAt = ""
@@ -71,8 +79,6 @@ const EditConversionForm = () => {
           Authorization: `Bearer ${token}`,
         },
       });
-
-      console.log(response.status)
 
       if (response.status === 200) {
         toast.success("Conversão editada com sucesso!")
@@ -133,7 +139,7 @@ const EditConversionForm = () => {
 
         <div className="divLabelAndInput">
           <label>Value:</label>
-          <input placeholder="Type the value in negotiation" type="number" {...register("value")} 
+          <input placeholder="Type the value in negotiation" type="string" {...register("value")} 
             defaultValue={thisConversion?.value}
           />
         </div>

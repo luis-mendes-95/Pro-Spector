@@ -55,8 +55,6 @@ const EditClientContactForm = () => {
         },
       });
 
-      console.log(response.status)
-
       if (response.status === 200) {
         toast.success("Contato editado com sucesso!")
 
@@ -93,8 +91,6 @@ const EditClientContactForm = () => {
     ShowClientDetailsForm(currentClientId)
     
   };
-
-  console.log(contacts)
 
   return (
     <Modal>

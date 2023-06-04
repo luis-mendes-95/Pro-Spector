@@ -41,8 +41,6 @@ const AddConversionForm = () => {
         },
       });
 
-      console.log(response)
-
       if (response.status === 201) {
         toast.success("Conversão cadastrada com sucesso!")
       }
