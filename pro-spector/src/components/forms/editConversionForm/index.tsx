@@ -1,5 +1,5 @@
 import Modal from "../../modal";
-import { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 import { FormStyle } from "../../../styles/main";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -9,10 +9,46 @@ import "react-toastify/dist/ReactToastify.css";
 import { ConversionSchema } from "../../../schemas/conversion";
 import { DashboardContext } from "../../../contexts/dashboard";
 import { useNavigate } from "react-router-dom";
+import api from "../../../services/api";
 
 const EditConversionForm = () => {
 
+  const { currentConversionId, setConversionsByRequest, conversions, SetConversion, currentConversion } = useContext(DashboardContext)
+
+  useEffect(() => {
+
+    const getConversions = async () => {
+
+      try {
+        const token = localStorage.getItem("prospector_user_token");
+        const response = await api.get("/conversions", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        const allConversions = response.data
+        setConversionsByRequest(allConversions)
+
+        response.data.map((data: any)=>{
+          if (data.id === currentConversionId) {
+            SetConversion(data)
+          }
+        })
+
+      } catch (error) {
+        console.log(error);
+      }  
+      
+    };
+
+    getConversions();
+    
+  }, []);
+
   const { ShowEditConversionForm } = useContext(DashboardContext);
+
+  console.log(currentConversion)
 
   const {
     register,
@@ -47,7 +83,7 @@ const EditConversionForm = () => {
         <div className="divLabelAndInput">
           <label>Value:</label>
           <input placeholder="Type the value in negotiation" type="number" {...register("value")} 
-            defaultValue="R$ 14.000,00"
+            defaultValue={currentConversion.value}
           />
         </div>
         {errors.value?.message && (
@@ -59,7 +95,7 @@ const EditConversionForm = () => {
         <div className="divLabelAndInput">
           <label>Details:</label>
           <textarea placeholder="Fill this info with all present and future information about this negotiation" {...register("details")} 
-            defaultValue="É torrão e chorão, mas fecha pois sabe que precisa, retornar sexta-feira dia 16 de manhã"
+            defaultValue={currentConversion.details}
           />
         </div>
         {errors.details?.message && (

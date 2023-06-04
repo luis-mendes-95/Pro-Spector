@@ -29,6 +29,7 @@ interface iDashboardProviderFunctions {
   currentClientId: number,
   currentContactId: number,
   currentConversionId: number,
+  currentConversion: any;
   setClientsByRequest: (data: any) => void;
   setContactsByRequest: (data: any) => void;
   setConversionsByRequest: (data: any) => void;
@@ -36,6 +37,7 @@ interface iDashboardProviderFunctions {
   conversions: any,
   contacts: any
   SetClient: (data: any) => void;
+  SetConversion: (data: any) => void;
 }
 
 interface iDashboardProviderProps {
@@ -59,6 +61,7 @@ export const DashboardProvider = ({ children }: iDashboardProviderProps) => {
   const [currentClient, setCurrentClient] = useState<any>();
   const [currentClientId, setCurrentClientId] = useState<number>(0);
   const [currentContactId, setCurrentContactId] = useState<number>(0);
+  const [currentConversion, setCurrentConversion] = useState<any>();
   const [currentConversionId, setCurrentConversionId] = useState<number>(0);
   const [clients, setClients] = useState([])
   const [conversions, setConversions] = useState([])
@@ -113,7 +116,8 @@ export const DashboardProvider = ({ children }: iDashboardProviderProps) => {
     setShowAddConversionForm(!showAddConversionForm);
   };
 
-  const ShowEditConversionForm = (): void => {
+  const ShowEditConversionForm = (id: number): void => {
+    setCurrentConversionId(id)
     setShowEditConversionForm(!showEditConversionForm);
   };
 
@@ -123,6 +127,10 @@ export const DashboardProvider = ({ children }: iDashboardProviderProps) => {
 
   const SetClient = (data: any) => {
     setCurrentClient(data);
+  };
+
+  const SetConversion = (data: any) => {
+    setCurrentConversion(data);
   };
 
   const SetContactId = (id: number) => {
@@ -166,7 +174,9 @@ export const DashboardProvider = ({ children }: iDashboardProviderProps) => {
         clients,
         contacts, 
         conversions,
-        SetClient
+        SetClient,
+        SetConversion,
+        currentConversion
       }}
     >
       {children}
