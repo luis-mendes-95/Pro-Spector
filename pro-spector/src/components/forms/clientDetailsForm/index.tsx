@@ -11,7 +11,7 @@ import { DashboardContext } from "../../../contexts/dashboard";
 import api from "../../../services/api";
 
 const ClientDetailsForm = () => {
-  const { currentClient, currentClientId, clients, contacts, conversions } = useContext(DashboardContext);
+  const { setClientsByRequest, currentClient, currentClientId, clients, contacts, conversions } = useContext(DashboardContext);
 
   const [currentClientConversions, setCurrentClientConversions] = useState<any>();
   const [currentClientContacts, setCurrentClientContacts] = useState<any>();
@@ -118,6 +118,45 @@ const ClientDetailsForm = () => {
 
   }
 
+  const deleteClient = async (id: number) => {
+    
+    try {
+      const token = localStorage.getItem("prospector_user_token");
+      const response = await api.delete(`/clients/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (response.status === 204) {
+        toast.success("Cliente deletado com sucesso!");
+
+        try {
+          const token = localStorage.getItem("prospector_user_token");
+          const response = await api.get("/clients", {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+  
+          const allClients = response.data
+          setClientsByRequest(allClients)
+          ShowClientDetailsForm(currentClientId)
+  
+        } catch (error) {
+          console.log(error);
+        }
+
+      }
+    
+
+    
+    } catch (error) {
+      console.log(error);
+    }
+
+  }
+
   return (
     <Modal>
       <FormStyle onSubmit={handleSubmit(submit)}>
@@ -196,7 +235,7 @@ const ClientDetailsForm = () => {
           </div>
 
           {currentClientContacts?.map((contact: any) => {
-            if (contact.client.id === currentClientId) {
+            if (contact.client?.id === currentClientId) {
               return (
                 <li key={contact.id}>
                   <h4>{contact.name}</h4>
@@ -295,6 +334,10 @@ const ClientDetailsForm = () => {
           >
             Close
           </button>
+
+          <button style={{backgroundColor: "orangered", color: "white"}} onClick={()=>{
+            deleteClient(currentClientId)
+          }}>Delete</button>
         </div>
       </FormStyle>
     </Modal>
