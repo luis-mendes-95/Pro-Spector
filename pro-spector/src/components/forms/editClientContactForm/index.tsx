@@ -1,5 +1,5 @@
 import Modal from "../../modal";
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import { FormStyle } from "../../../styles/main";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -9,10 +9,22 @@ import "react-toastify/dist/ReactToastify.css";
 import { ClientContactSchema } from "../../../schemas/client";
 import { DashboardContext } from "../../../contexts/dashboard";
 import { useNavigate } from "react-router-dom";
+import api from "../../../services/api";
 
 const EditClientContactForm = () => {
 
-  const { ShowEditClientContactForm, currentClientId } = useContext(DashboardContext);
+  const { currentContactId, setContactsByRequest, ShowEditClientContactForm, contacts, SetContact, currentContact, ShowClientDetailsForm, currentClientId } = useContext(DashboardContext)
+
+  useEffect(() => {
+
+    contacts.map((contact: any) => {
+      if (contact.id === currentClientId) {
+        SetContact(contact)
+      }
+    })
+
+  }, [])
+  
 
   const { register, handleSubmit, formState: { errors }, } = 
   useForm<iClientContact>({ resolver: yupResolver(ClientContactSchema) });
@@ -22,6 +34,8 @@ const EditClientContactForm = () => {
     console.log(data);
   };
 
+  console.log(currentContact)
+
   return (
     <Modal>
       <FormStyle onSubmit={handleSubmit(submit)}>
@@ -30,7 +44,7 @@ const EditClientContactForm = () => {
         <div className="divLabelAndInput">
           <label>Complete Name:</label>
           <input
-            defaultValue="Gertrudes de Almeida Cruzes"
+            defaultValue={currentContact?.name}
             placeholder="Type here your username"
             {...register("name")}
           />
@@ -44,7 +58,7 @@ const EditClientContactForm = () => {
         <div className="divLabelAndInput">
           <label>E-mail:</label>
           <input
-            defaultValue="Gertrudes@gmail.com"
+            defaultValue={currentContact?.email}
             placeholder="Type here your password"
             {...register("email")}
           />
@@ -55,10 +69,10 @@ const EditClientContactForm = () => {
           </p>
         )}
 
-        <div className="divLabelAndInput">
+        {/* <div className="divLabelAndInput">
           <label>Phone:</label>
           <input
-            defaultValue="+55 342 686 998"
+            defaultValue={currentContact?.phone}
             placeholder="Type here your password"
             {...register("phone")}
           />
@@ -67,7 +81,7 @@ const EditClientContactForm = () => {
           <p className="pError" aria-label="error">
             {errors.phone.message}
           </p>
-        )}
+        )} */}
 
         <div className="DivButtonsReg">
           <button type="submit" className="buttonSaveReg">
@@ -77,6 +91,7 @@ const EditClientContactForm = () => {
           <button
             onClick={()=>{
               ShowEditClientContactForm(currentClientId)
+              SetContact("")
             }}
             className="buttonCancelReg"
           >

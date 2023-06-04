@@ -285,13 +285,13 @@ const ClientDetailsForm = () => {
                       width: "50%",
                     }}
                   >
-                    <button
+                    <p
                       onClick={() => {
                         ShowEditClientContactForm(contact.id);
                       }}
                     >
                       Edit
-                    </button>
+                    </p>
                     <p style={{ color: "red" }} onClick={()=>{
                       deleteContact(contact.id)
                     }}>Delete</p>
