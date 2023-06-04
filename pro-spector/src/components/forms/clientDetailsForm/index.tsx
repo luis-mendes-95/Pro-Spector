@@ -80,6 +80,44 @@ const ClientDetailsForm = () => {
     console.log(data);
   };
 
+  const deleteConversion = async (id: number) => {
+    
+    try {
+      const token = localStorage.getItem("prospector_user_token");
+      const response = await api.delete(`/conversions/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (response.status === 204) {
+        toast.success("Conversão deletada com sucesso!");
+
+        try {
+          const token = localStorage.getItem("prospector_user_token");
+          const response = await api.get("/conversions", {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+  
+          const allConversions = response.data
+          setCurrentClientConversions(allConversions)
+  
+        } catch (error) {
+          console.log(error);
+        }
+
+      }
+    
+
+    
+    } catch (error) {
+      console.log(error);
+    }
+
+  }
+
   return (
     <Modal>
       <FormStyle onSubmit={handleSubmit(submit)}>
@@ -234,7 +272,9 @@ const ClientDetailsForm = () => {
                     <button onClick={()=>{
                       ShowEditConversionForm(conversion.id)
                     }}>Edit</button>
-                    <button style={{ color: "red" }}>Delete</button>
+                    <button style={{ color: "red" }} onClick={()=>{
+                      deleteConversion(conversion.id)
+                    }}>Delete</button>
                   </div>
                 </li>
               );
