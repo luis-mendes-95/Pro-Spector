@@ -83,7 +83,7 @@ const EditConversionForm = () => {
         <div className="divLabelAndInput">
           <label>Value:</label>
           <input placeholder="Type the value in negotiation" type="number" {...register("value")} 
-            defaultValue={currentConversion.value}
+            defaultValue={currentConversion?.value}
           />
         </div>
         {errors.value?.message && (
@@ -95,7 +95,7 @@ const EditConversionForm = () => {
         <div className="divLabelAndInput">
           <label>Details:</label>
           <textarea placeholder="Fill this info with all present and future information about this negotiation" {...register("details")} 
-            defaultValue={currentConversion.details}
+            defaultValue={currentConversion?.details}
           />
         </div>
         {errors.details?.message && (
