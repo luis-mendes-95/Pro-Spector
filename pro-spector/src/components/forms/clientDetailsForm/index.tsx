@@ -31,11 +31,10 @@ const ClientDetailsForm = () => {
         const allContacts = response.data
         setCurrentClientContacts(allContacts)
 
-        console.log(currentClientContacts)
-
       } catch (error) {
         console.log(error);
       }
+
     };
 
     getContacts();
@@ -48,6 +47,9 @@ const ClientDetailsForm = () => {
             Authorization: `Bearer ${token}`,
           },
         });
+
+        const allConversions = response.data
+        setCurrentClientConversions(allConversions)
 
       } catch (error) {
         console.log(error);
