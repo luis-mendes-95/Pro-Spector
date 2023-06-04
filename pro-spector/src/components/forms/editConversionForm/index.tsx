@@ -13,7 +13,7 @@ import api from "../../../services/api";
 
 const EditConversionForm = () => {
 
-  const { currentConversionId, setConversionsByRequest, conversions, SetConversion, currentConversion } = useContext(DashboardContext)
+  const { currentConversionId, setConversionsByRequest, conversions, SetConversion, currentConversion, ShowClientDetailsForm, currentClientId } = useContext(DashboardContext)
 
   useEffect(() => {
 
@@ -43,12 +43,12 @@ const EditConversionForm = () => {
     };
 
     getConversions();
-    
+
   }, []);
 
   const { ShowEditConversionForm } = useContext(DashboardContext);
 
-  console.log(currentConversion)
+  const thisConversion = currentConversion
 
   const {
     register,
@@ -83,7 +83,7 @@ const EditConversionForm = () => {
         <div className="divLabelAndInput">
           <label>Value:</label>
           <input placeholder="Type the value in negotiation" type="number" {...register("value")} 
-            defaultValue={currentConversion?.value}
+            defaultValue={thisConversion?.value}
           />
         </div>
         {errors.value?.message && (
@@ -95,7 +95,7 @@ const EditConversionForm = () => {
         <div className="divLabelAndInput">
           <label>Details:</label>
           <textarea placeholder="Fill this info with all present and future information about this negotiation" {...register("details")} 
-            defaultValue={currentConversion?.details}
+            defaultValue={thisConversion?.details}
           />
         </div>
         {errors.details?.message && (
@@ -120,7 +120,9 @@ const EditConversionForm = () => {
           </button>
 
           <button onClick={()=>{
-            ShowEditConversionForm(0)
+            ShowEditConversionForm(currentConversionId)
+            ShowClientDetailsForm(currentClientId)
+            SetConversion("")
           }} className="buttonCancelReg">
             Close
           </button>
