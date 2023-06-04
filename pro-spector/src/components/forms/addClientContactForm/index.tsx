@@ -46,8 +46,6 @@ const AddClientContactForm = () => {
         },
       });
 
-      console.log(response)
-
       if (response.status === 201) {
         toast.success("Contato cadastrado com sucesso!")
       }

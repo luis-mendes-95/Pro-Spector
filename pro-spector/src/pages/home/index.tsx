@@ -25,8 +25,6 @@ const Homepage = () => {
           },
         });
 
-        console.log(response.status);
-
         if (response.status === 200) {
           navigate("/dashboard");
         }
