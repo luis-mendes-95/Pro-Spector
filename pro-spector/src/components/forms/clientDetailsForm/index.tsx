@@ -403,7 +403,7 @@ const ClientDetailsForm = () => {
           })}
         </ul>
 
-        <div className="DivButtonsReg">
+        <div className="DivButtonsReg" style={{display: "flex"}}>
           <button type="submit" className="buttonSaveReg">
             Save
           </button>
@@ -420,6 +420,7 @@ const ClientDetailsForm = () => {
           <button
             style={{ backgroundColor: "orangered", color: "white" }}
             onClick={() => {
+              ShowClientDetailsForm(currentClientId)
               deleteClient(currentClientId);
             }}
           >
