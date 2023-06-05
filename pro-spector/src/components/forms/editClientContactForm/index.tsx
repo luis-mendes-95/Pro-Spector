@@ -101,10 +101,6 @@ const EditClientContactForm = () => {
 
       }
   
-      
-
-      
-
       }
 
     } catch (error: any) {
@@ -180,6 +176,7 @@ const EditClientContactForm = () => {
             onClick={()=>{
               ShowEditClientContactForm(currentClientId)
               SetContact("")
+              ShowClientDetailsForm(currentClientId)
             }}
             className="buttonCancelReg"
           >
