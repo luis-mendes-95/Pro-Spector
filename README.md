@@ -2,6 +2,13 @@
 
 Pro-Spector is a prospectation app that helps sellers to manage their contacts and conversions, simply as that!
 
+# Running local:
+1) clone repository
+2) type "yarn" to install all libraries
+3) type "yarn start" to start application.
+
+# OR RUN IT ON DEPLOY LINK, AS BELOW: 
+
 # Follow the steps to learn how to use:
 
 # Register and Login:
