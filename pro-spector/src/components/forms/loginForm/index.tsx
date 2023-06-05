@@ -1,5 +1,5 @@
 import Modal from "../../modal";
-import { useContext, useState } from "react";
+import { useContext } from "react";
 import { FormStyle } from "../../../styles/main";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -10,26 +10,21 @@ import UserLoginSchema from "../../../schemas/login";
 import { HomeContext } from "../../../contexts/home";
 import { useNavigate } from "react-router-dom";
 import api from "../../../services/api";
-import { UserContext } from "../../../contexts/user";
 
 const FormLogin = () => {
+
   const navigate = useNavigate();
 
   const { ShowLoginForm } = useContext(HomeContext);
-  const { setToken, tokenUser } = useContext(UserContext);
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<iLogin>({ resolver: yupResolver(UserLoginSchema) });
+  const { register, handleSubmit, formState: { errors }} = useForm<iLogin>({ resolver: yupResolver(UserLoginSchema) });
 
   const submit = async (data: iLogin) => {
+    
     try {
       const response = await api.post("/login", data);
 
       if (response.status === 200) {
-        setToken(response.data.token);
         localStorage.setItem("prospector_user_token", response.data.token);
         toast.success(
           "Login efetuado com sucesso, você será redirecionado para a Dashboard"
@@ -62,8 +57,7 @@ const FormLogin = () => {
 
         <div className="divLabelAndInput">
           <label>Password:</label>
-          <input
-            placeholder="Type here your password"
+          <input placeholder="Type here your password" type="password"
             {...register("password")}
           />
         </div>

@@ -1,4 +1,3 @@
-import React from "react";
 import { MainHome } from "../../styles/main";
 
 const Main = () => {

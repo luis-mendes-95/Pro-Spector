@@ -1,6 +1,4 @@
-import React, { createContext, useState, useEffect } from "react";
-import { useContext } from "react";
-import { toast } from "react-toastify";
+import React, { createContext, useState } from "react";
 import "react-toastify/dist/ReactToastify.css";
 
 interface iHomeProviderFunctions {

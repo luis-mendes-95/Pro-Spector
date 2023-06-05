@@ -1,5 +1,5 @@
 import Modal from "../../modal";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect } from "react";
 import { FormStyle } from "../../../styles/main";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -8,17 +8,16 @@ import { iConversion } from "../../../interfaces/conversion";
 import "react-toastify/dist/ReactToastify.css";
 import { ConversionSchema } from "../../../schemas/conversion";
 import { DashboardContext } from "../../../contexts/dashboard";
-import { useNavigate } from "react-router-dom";
 import api from "../../../services/api";
 
 const EditConversionForm = () => {
 
-  const { currentConversionId, setConversionsByRequest, ShowEditConversionForm, conversions, SetConversion, currentConversion, ShowClientDetailsForm, currentClientId } = useContext(DashboardContext)
+  const { currentConversionId, setConversionsByRequest, ShowEditConversionForm, SetConversion, currentConversion, ShowClientDetailsForm,
+     currentClientId } = useContext(DashboardContext)
 
   useEffect(() => {
 
     const getConversions = async () => {
-
       try {
         const token = localStorage.getItem("prospector_user_token");
         const response = await api.get("/conversions", {
@@ -30,10 +29,14 @@ const EditConversionForm = () => {
         const allConversions = response.data
         setConversionsByRequest(allConversions)
 
-        response.data.map((data: any)=>{
+        response.data.map((data: iConversion) => {
+
           if (data.id === currentConversionId) {
             SetConversion(data)
           }
+
+          return ""
+
         })
 
       } catch (error) {
@@ -41,20 +44,15 @@ const EditConversionForm = () => {
       }  
       
     };
-
     getConversions();
 
   }, []);
 
   const thisConversion = currentConversion
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<iConversion>({ resolver: yupResolver(ConversionSchema) });
+  const { register, handleSubmit, formState: { errors }} = useForm<iConversion>({ resolver: yupResolver(ConversionSchema) });
 
-  const submit = async (data: any) => {
+  const submit = async (data: iConversion) => {
 
     let dataString = new Date().toLocaleDateString('en-US').replace(/\//g, '-');
 
@@ -123,21 +121,8 @@ const EditConversionForm = () => {
       <FormStyle onSubmit={handleSubmit(submit)}>
         <h2>EDIT CONVERSION PROCESS:</h2>
 
-        {/* <div className="divLabelAndInput">
-          <label>Title:</label>
-          <input
-            defaultValue="400 T-Shirts to 200 employes"
-            placeholder="Choose a title for this process"
-            {...register("title")}
-          />
-        </div>
-        {errors.title?.message && (
-          <p className="pError" aria-label="error">
-            {errors.title.message}
-          </p>
-        )} */}
-
         <div className="divLabelAndInput">
+
           <label>Value:</label>
           <input placeholder="Type the value in negotiation" type="string" {...register("value")} 
             defaultValue={thisConversion?.value}
@@ -150,10 +135,12 @@ const EditConversionForm = () => {
         )}
 
         <div className="divLabelAndInput">
+
           <label>Details:</label>
           <textarea placeholder="Fill this info with all present and future information about this negotiation" {...register("details")} 
             defaultValue={thisConversion?.details}
           />
+
         </div>
         {errors.details?.message && (
           <p className="pError" aria-label="error">
@@ -161,17 +148,8 @@ const EditConversionForm = () => {
           </p>
         )}
 
-        {/* <div className="divLabelAndInput">
-          <label>Sucess:</label>
-          <input {...register("sucess")} type="checkbox" />
-        </div>
-        {errors.sucess?.message && (
-          <p className="pError" aria-label="error">
-            {errors.sucess.message}
-          </p>
-        )} */}
-
         <div className="DivButtonsReg">
+
           <button type="submit" className="buttonSaveReg">
             Save
           </button>
@@ -183,6 +161,7 @@ const EditConversionForm = () => {
           }} className="buttonCancelReg">
             Close
           </button>
+          
         </div>
       </FormStyle>
     </Modal>

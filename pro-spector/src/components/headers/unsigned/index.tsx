@@ -1,8 +1,9 @@
-import React, { useContext } from "react";
+import { useContext } from "react";
 import { HeaderHome } from "../../../styles/headers";
 import { HomeContext } from "../../../contexts/home";
 
 const Header = () => {
+  
   const { ShowLoginForm, ShowRegisterForm } = useContext(HomeContext);
 
   return (

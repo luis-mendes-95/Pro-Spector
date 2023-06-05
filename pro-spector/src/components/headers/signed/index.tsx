@@ -1,22 +1,10 @@
-import React, { useContext } from "react";
+import { useContext } from "react";
 import { HeaderHome } from "../../../styles/headers";
 import { DashboardContext } from "../../../contexts/dashboard";
 
 const Header = () => {
-  const {
-    ShowContactsDashboard,
-    ShowDashboardHome,
-    showContactsDashboard,
-    showDashboardHome,
 
-    logout,
-
-    ShowAddClientForm,
-    ShowClientDetailsForm,
-    showAddClientForm,
-    showClientDetailsForm
-    
-  } = useContext(DashboardContext);
+  const { ShowContactsDashboard, ShowDashboardHome, logout } = useContext(DashboardContext);
 
   return (
     <HeaderHome>

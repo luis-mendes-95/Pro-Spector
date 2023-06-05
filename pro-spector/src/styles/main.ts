@@ -79,7 +79,7 @@ export const DashboardBackground = styled.main`
     transition: 0.3s;
     cursor: pointer;
   }
-  button:hover, .tdAsButton:hover {
+  button:hover, .tdAsButton:hover, span:hover, p:hover, .tdAsButton:hover {
     transition: 0.3s;
     scale: 1.2;
   }
@@ -215,7 +215,7 @@ export const FormStyle = styled.form`
     justify-content: flex-end;
     padding: 5px 10px 0px 0px;
 
-    button, span, td {
+    button, span, td, p {
       background-color: red;
       color: white;
       font-weight: bold;
@@ -223,6 +223,7 @@ export const FormStyle = styled.form`
       border: none;
       border-radius: 8px;
       box-shadow: 1px 1px 5px black;
+      cursor: pointer;
     }
   }
 
