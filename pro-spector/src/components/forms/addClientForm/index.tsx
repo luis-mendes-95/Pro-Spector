@@ -1,28 +1,21 @@
 import Modal from "../../modal";
-import { useContext, useState } from "react";
+import { useContext } from "react";
 import { FormStyle } from "../../../styles/main";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { toast } from "react-toastify";
-import { iClient, iClientContact } from "../../../interfaces/client";
+import { iClient } from "../../../interfaces/client";
 import "react-toastify/dist/ReactToastify.css";
-import { ClientSchema, ClientContactSchema } from "../../../schemas/client";
+import { ClientSchema } from "../../../schemas/client";
 import { DashboardContext } from "../../../contexts/dashboard";
-import { useNavigate } from "react-router-dom";
 import api from "../../../services/api";
 
 const AddClientForm = () => {
-  const navigate = useNavigate();
 
   const {
-    setClientsByRequest, ShowAddClientForm, ShowClientDetailsForm, showAddClientForm, showClientDetailsForm,
-  } = useContext(DashboardContext);
+    setClientsByRequest, ShowAddClientForm } = useContext(DashboardContext);
  
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<iClient>({ resolver: yupResolver(ClientSchema) });
+  const { register,handleSubmit, formState: { errors } } = useForm<iClient>({ resolver: yupResolver(ClientSchema) });
 
   const submit = async (data: iClient) => {
 

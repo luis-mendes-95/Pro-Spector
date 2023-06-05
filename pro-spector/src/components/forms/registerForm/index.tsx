@@ -1,5 +1,5 @@
 import Modal from "../../modal";
-import { useContext, useState } from "react";
+import { useContext } from "react";
 import { FormStyle } from "../../../styles/main";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -8,20 +8,13 @@ import { iRegisterUser } from "../../../interfaces/user";
 import "react-toastify/dist/ReactToastify.css";
 import UserRegisterSchema from "../../../schemas/register";
 import { HomeContext } from "../../../contexts/home";
-import { useNavigate } from "react-router-dom";
 import api from "../../../services/api"
 
 const FormRegister = () => {
 
-  const navigate = useNavigate();
-
   const { ShowRegisterForm } = useContext(HomeContext);
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<iRegisterUser>({ resolver: yupResolver(UserRegisterSchema) });
+  const { register, handleSubmit, formState: { errors }} = useForm<iRegisterUser>({ resolver: yupResolver(UserRegisterSchema) });
 
   const submit = async (data: iRegisterUser) => {
     
@@ -68,19 +61,9 @@ const FormRegister = () => {
           </p>
         )}
 
-        {/* <div className="divLabelAndInput">
-          <label>Phone:</label>
-          <input placeholder="Type here your phone" {...register("phone")} />
-        </div>
-        {errors.phone?.message && (
-          <p className="pError" aria-label="error">
-            {errors.phone.message}
-          </p>
-        )} */}
-
         <div className="divLabelAndInput">
           <label>Password:</label>
-          <input placeholder="Choose a password" {...register("password")} />
+          <input placeholder="Choose a password" type="password" {...register("password")} />
         </div>
         {errors.password?.message && (
           <p className="pError" aria-label="error">

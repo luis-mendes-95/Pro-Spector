@@ -1,31 +1,23 @@
 import Modal from "../../modal";
-import { useContext, useState } from "react";
+import { useContext } from "react";
 import { FormStyle } from "../../../styles/main";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { toast } from "react-toastify";
-import { iClient, iClientContact } from "../../../interfaces/client";
+import { iClientContact } from "../../../interfaces/client";
 import "react-toastify/dist/ReactToastify.css";
-import { ClientSchema, ClientContactSchema } from "../../../schemas/client";
+import { ClientContactSchema } from "../../../schemas/client";
 import { DashboardContext } from "../../../contexts/dashboard";
-import { useNavigate } from "react-router-dom";
 import api from "../../../services/api";
+import { useNavigate } from "react-router-dom";
 
 const AddClientContactForm = () => {
 
-  const navigate = useNavigate();
+  const navigate = useNavigate()
 
-  const {
-    ShowAddClientForm,    ShowClientDetailsForm,    showAddClientForm,    showClientDetailsForm,
-    ShowAddClientContactForm, showAddClientContactForm,
-     currentClientId
-  } = useContext(DashboardContext);
+  const { ShowClientDetailsForm, ShowAddClientContactForm, currentClientId, setContactsByRequest } = useContext(DashboardContext);
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<iClientContact>({ resolver: yupResolver(ClientContactSchema) });
+  const { register, handleSubmit, formState: { errors } } = useForm<iClientContact>({ resolver: yupResolver(ClientContactSchema) });
 
   const submit = async (data: iClientContact) => {
 
@@ -47,7 +39,9 @@ const AddClientContactForm = () => {
       });
 
       if (response.status === 201) {
+        
         toast.success("Contato cadastrado com sucesso!")
+        navigate("/")
       }
 
     } catch (error: any) {

@@ -1,4 +1,5 @@
 export interface iClient {
+  id: number;
   name: string;
   email: string;
   phone: string;
@@ -9,6 +10,7 @@ export interface iClient {
 
 export interface iClientContact {
   clientId: number;
+  client: iClient;
   name: string;
   email: string;
   phone: string;

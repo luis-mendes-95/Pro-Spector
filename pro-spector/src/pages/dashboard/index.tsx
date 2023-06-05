@@ -31,7 +31,7 @@ const Dashboard = () => {
     try {
       const token = localStorage.getItem("prospector_user_token");
   
-      const response = await api.get("/users", {
+      await api.get("/users", {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -44,18 +44,11 @@ const Dashboard = () => {
     } 
 
   }
-
   validateLogin()
 
   return (
-    <div
-      style={{
-        height: "100vh",
-        display: "flex",
-        flexDirection: "column",
-        justifyContent: "space-between",
-      }}
-    >
+    <div style={{ height: "100vh", display: "flex", flexDirection: "column", justifyContent: "space-between" }} >
+
       {showAddClientForm && <AddClientForm />}
       {showClientDetailsForm && <ClientDetailsForm />}
       {showAddClientContactForm && <AddClientContactForm />}
@@ -65,6 +58,7 @@ const Dashboard = () => {
       <Header />
       {showDashboardHome ? <DashboardHome /> : <ContactsDashboard />}
       <Footer />
+      
     </div>
   );
 };

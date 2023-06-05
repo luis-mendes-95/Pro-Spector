@@ -1,8 +1,8 @@
-import React, { createContext, useState, useEffect } from "react";
-import { useContext } from "react";
+import React, { createContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { iClient, iClientContact } from "../interfaces/client";
+import { iConversion } from "../interfaces/conversion";
 
 interface iDashboardProviderFunctions {
   showDashboardHome: boolean;
@@ -60,27 +60,27 @@ export const DashboardProvider = ({ children }: iDashboardProviderProps) => {
   const [showEditClientContactForm, setShowEditClientContactForm] = useState(false);
   const [showAddConversionForm, setShowAddConversionForm] = useState(false);
   const [showEditConversionForm, setShowEditConversionForm] = useState(false);
-  const [currentClient, setCurrentClient] = useState<any>();
+  const [currentClient, setCurrentClient] = useState<iClient>();
   const [currentClientId, setCurrentClientId] = useState<number>(0);
   const [currentContactId, setCurrentContactId] = useState<number>(0);
-  const [currentContact, setCurrentContact] = useState<any>();
-  const [currentConversion, setCurrentConversion] = useState<any>();
+  const [currentContact, setCurrentContact] = useState<iClientContact>();
+  const [currentConversion, setCurrentConversion] = useState<iConversion>();
   const [currentConversionId, setCurrentConversionId] = useState<number>(0);
-  const [clients, setClients] = useState([])
-  const [conversions, setConversions] = useState([])
-  const [contacts, setContacts] = useState([])
+  const [clients, setClients] = useState<iClient[]>([])
+  const [conversions, setConversions] = useState<iConversion[]>([])
+  const [contacts, setContacts] = useState<iClientContact[]>([])
 
   const navigate = useNavigate();
 
-  const setClientsByRequest = (data: any) => {
+  const setClientsByRequest = (data: iClient[]) => {
     setClients(data)
   }
 
-  const setConversionsByRequest = (data: any) => {
+  const setConversionsByRequest = (data: iConversion[]) => {
     setConversions(data)
   }
 
-  const setContactsByRequest = (data: any) => {
+  const setContactsByRequest = (data: iClientContact[]) => {
     setContacts(data)
   }
 
@@ -128,15 +128,15 @@ export const DashboardProvider = ({ children }: iDashboardProviderProps) => {
     setCurrentClientId(id);
   };
 
-  const SetClient = (data: any) => {
+  const SetClient = (data: iClient) => {
     setCurrentClient(data);
   };
 
-  const SetConversion = (data: any) => {
+  const SetConversion = (data: iConversion) => {
     setCurrentConversion(data);
   };
   
-  const SetContact = (data: any) => {
+  const SetContact = (data: iClientContact) => {
     setCurrentContact(data);
   };
 
