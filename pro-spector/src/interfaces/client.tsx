@@ -9,6 +9,7 @@ export interface iClient {
 }
 
 export interface iClientContact {
+  id: number;
   clientId: number;
   client: iClient;
   name: string;

@@ -41,7 +41,7 @@ const AddClientContactForm = () => {
       if (response.status === 201) {
         
         toast.success("Contato cadastrado com sucesso!")
-        navigate("/")
+        
       }
 
     } catch (error: any) {
@@ -53,7 +53,7 @@ const AddClientContactForm = () => {
 
     setTimeout(() => {
       ShowAddClientContactForm()
-      ShowClientDetailsForm(1)
+      ShowClientDetailsForm(currentClientId)
     }, 2000);
 
   };

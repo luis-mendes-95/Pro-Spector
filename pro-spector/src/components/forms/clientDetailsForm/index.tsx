@@ -17,7 +17,7 @@ const ClientDetailsForm = () => {
   const navigate = useNavigate();
 
   const { ShowClientDetailsForm, ShowAddClientContactForm, ShowEditClientContactForm, ShowAddConversionForm,
-          ShowEditConversionForm,setClientsByRequest, currentClient, currentClientId } = useContext(DashboardContext);
+          ShowEditConversionForm,setClientsByRequest, currentClient, currentClientId, SetContactId } = useContext(DashboardContext);
 
   const [currentClientConversions, setCurrentClientConversions] = useState<iConversion[]>();
   const [currentClientContacts, setCurrentClientContacts] = useState<iClientContact[]>();
@@ -245,7 +245,7 @@ const ClientDetailsForm = () => {
 
           </div>
 
-          {currentClientContacts?.map((contact: any) => {
+          {currentClientContacts?.map((contact: iClientContact) => {
             if (contact.client?.id === currentClientId) {
               return (
                 <li key={contact.id}>
@@ -256,7 +256,8 @@ const ClientDetailsForm = () => {
 
                   <div style={{display: "flex", justifyContent: "space-between", width: "50%"}}>
 
-                    <p style={{cursor: "pointer"}}onClick={() => { ShowEditClientContactForm(contact.id); ShowClientDetailsForm(currentClientId) }}>
+                    <p style={{cursor: "pointer"}}onClick={() => { 
+                      ShowEditClientContactForm(contact.id); ShowClientDetailsForm(currentClientId); SetContactId(contact.id)}}>
                       Edit
                     </p>
 

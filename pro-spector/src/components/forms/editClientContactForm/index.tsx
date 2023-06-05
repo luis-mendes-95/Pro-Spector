@@ -1,5 +1,5 @@
 import Modal from "../../modal";
-import { useContext, useEffect } from "react";
+import { useContext, useEffect, useState } from "react";
 import { FormStyle } from "../../../styles/main";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -12,64 +12,98 @@ import api from "../../../services/api";
 
 const EditClientContactForm = () => {
 
-  const { currentContactId, setContactsByRequest, ShowEditClientContactForm, contacts, SetContact, currentContact, ShowClientDetailsForm,
+  const { currentContactId, setContactsByRequest, ShowEditClientContactForm, SetContact, ShowClientDetailsForm,
           currentClientId } = useContext(DashboardContext)
 
+  const [currentClientContacts, setCurrentClientContacts] = useState<iClientContact[]>();
+  const [currentContact, setCurrentContact] = useState<iClientContact>();
+
   useEffect(() => {
-
-    contacts.map((contact: iClientContact) => {
-      if (contact.client.id === currentClientId) {
-        SetContact(contact)
-      }
-    })
-
-  }, [])
+    const getContacts = async () => {
+      try {
+        const token = localStorage.getItem("prospector_user_token");
+        const response = await api.get("/contacts", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
   
+        const allContacts = response.data;
+        setCurrentClientContacts(allContacts);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+  
+    getContacts();
+  
+    if (currentContactId && currentClientContacts) {
+      const contact = currentClientContacts.find(
+        (contact) => contact.id === currentContactId
+      );
+      if (contact) {
+        setCurrentContact(contact);
+      }
+    }
+  }, [currentContactId, currentClientContacts]);
+
   const { register, handleSubmit, formState: { errors } } = useForm<iClientContact>({ resolver: yupResolver(ClientContactEditSchema) });
 
   const submit = async (data: iClientContact) => {
 
-    if (data.name === "") {
-      data.name = currentContact.name
+    if (currentContact) {
+
+      if (data.name === "") {
+        data.name = currentContact.name
+      }
+  
+      if (data.email === "") {
+        data.email = currentContact.email
+      }
+  
+      let dataString = new Date().toLocaleDateString('en-US').replace(/\//g, '-');
+  
+      data.createdAt = currentContact.createdAt
+      data.updatedAt = dataString
+      data.deletedAt = ""
+      data.clientId = currentClientId
+
     }
 
-    if (data.email === "") {
-      data.email = currentContact.email
-    }
-
-    let dataString = new Date().toLocaleDateString('en-US').replace(/\//g, '-');
-
-    data.createdAt = currentContact.createdAt
-    data.updatedAt = dataString
-    data.deletedAt = ""
-    data.clientId = currentClientId
- 
     try {
       const token = localStorage.getItem("prospector_user_token");
-  
-      const response = await api.patch(`/contacts/${currentContact.id}`, data, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
 
-      if (response.status === 200) {
-        toast.success("Contato editado com sucesso!")
+      if (currentContact) {
 
-        try {
-          const token = localStorage.getItem("prospector_user_token");
+        const response = await api.patch(`/contacts/${currentContact.id}`, data, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
 
-          const response = await api.get("/contacts", {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          });
+        if (response.status === 200) {
+          toast.success("Contato editado com sucesso!")
   
-          setContactsByRequest(response.data)
+          try {
+            const token = localStorage.getItem("prospector_user_token");
   
-        } catch (error) {
-          console.log(error);
-        }
+            const response = await api.get("/contacts", {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            });
+    
+            setContactsByRequest(response.data)
+    
+          } catch (error) {
+            console.log(error);
+          }
+
+      }
+  
+      
+
+      
 
       }
 
