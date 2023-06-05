@@ -8,16 +8,16 @@ import { iClientContact } from "../../../interfaces/client";
 import "react-toastify/dist/ReactToastify.css";
 import { ClientContactEditSchema } from "../../../schemas/client";
 import { DashboardContext } from "../../../contexts/dashboard";
-import { useNavigate } from "react-router-dom";
 import api from "../../../services/api";
 
 const EditClientContactForm = () => {
 
-  const { currentContactId, setContactsByRequest, ShowEditClientContactForm, contacts, SetContact, currentContact, ShowClientDetailsForm, currentClientId } = useContext(DashboardContext)
+  const { currentContactId, setContactsByRequest, ShowEditClientContactForm, contacts, SetContact, currentContact, ShowClientDetailsForm,
+          currentClientId } = useContext(DashboardContext)
 
   useEffect(() => {
 
-    contacts.map((contact: any) => {
+    contacts.map((contact: iClientContact) => {
       if (contact.client.id === currentClientId) {
         SetContact(contact)
       }
@@ -25,11 +25,9 @@ const EditClientContactForm = () => {
 
   }, [])
   
+  const { register, handleSubmit, formState: { errors } } = useForm<iClientContact>({ resolver: yupResolver(ClientContactEditSchema) });
 
-  const { register, handleSubmit, formState: { errors }, } = 
-  useForm<iClientContact>({ resolver: yupResolver(ClientContactEditSchema) });
-
-  const submit = async (data: any) => {
+  const submit = async (data: iClientContact) => {
 
     if (data.name === "") {
       data.name = currentContact.name

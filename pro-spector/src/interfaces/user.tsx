@@ -8,5 +8,4 @@ export interface iRegisterUser {
   name: string;
   password: string;
   admin: boolean;
-  // phone: string;
 }

@@ -6,28 +6,24 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { toast } from "react-toastify";
 import { iClient, iClientContact } from "../../../interfaces/client";
 import "react-toastify/dist/ReactToastify.css";
-import { ClientSchema, ClientContactSchema } from "../../../schemas/client";
+import { ClientSchema } from "../../../schemas/client";
 import { DashboardContext } from "../../../contexts/dashboard";
 import api from "../../../services/api";
 import { useNavigate } from "react-router-dom";
+import { iConversion } from "../../../interfaces/conversion";
 
 const ClientDetailsForm = () => {
+  
   const navigate = useNavigate();
 
-  const {
-    setClientsByRequest,
-    currentClient,
-    currentClientId,
-    clients,
-    contacts,
-    conversions,
-  } = useContext(DashboardContext);
+  const { ShowClientDetailsForm, ShowAddClientContactForm, ShowEditClientContactForm, ShowAddConversionForm,
+          ShowEditConversionForm,setClientsByRequest, currentClient, currentClientId } = useContext(DashboardContext);
 
-  const [currentClientConversions, setCurrentClientConversions] =
-    useState<any>();
-  const [currentClientContacts, setCurrentClientContacts] = useState<any>();
+  const [currentClientConversions, setCurrentClientConversions] = useState<iConversion[]>();
+  const [currentClientContacts, setCurrentClientContacts] = useState<iClientContact[]>();
 
   useEffect(() => {
+
     const getContacts = async () => {
       try {
         const token = localStorage.getItem("prospector_user_token");
@@ -43,7 +39,6 @@ const ClientDetailsForm = () => {
         console.log(error);
       }
     };
-
     getContacts();
 
     const getConversions = async () => {
@@ -61,17 +56,9 @@ const ClientDetailsForm = () => {
         console.log(error);
       }
     };
-
     getConversions();
-  }, []);
 
-  const {
-    ShowClientDetailsForm,
-    ShowAddClientContactForm,
-    ShowEditClientContactForm,
-    ShowAddConversionForm,
-    ShowEditConversionForm,
-  } = useContext(DashboardContext);
+  }, []);
 
   const {
     register,
@@ -80,6 +67,7 @@ const ClientDetailsForm = () => {
   } = useForm<iClient>({ resolver: yupResolver(ClientSchema) });
 
   const submit = async (data: iClient) => {
+
     let dataString = new Date().toLocaleDateString("en-US").replace(/\//g, "-");
 
     data.createdAt = currentClient.createdAt;
@@ -124,6 +112,7 @@ const ClientDetailsForm = () => {
   };
 
   const deleteConversion = async (id: number) => {
+
     try {
       const token = localStorage.getItem("prospector_user_token");
       const response = await api.delete(`/conversions/${id}`, {
@@ -229,69 +218,31 @@ const ClientDetailsForm = () => {
 
         <div className="divLabelAndInput">
           <label>Complete Name:</label>
-          <input
-            defaultValue={currentClient?.name}
-            placeholder="Type here your username"
-            {...register("name")}
-          />
+          <input defaultValue={currentClient?.name} placeholder="Type here your username" {...register("name")} />
         </div>
-        {errors.name?.message && (
-          <p className="pError" aria-label="error">
-            {errors.name.message}
-          </p>
-        )}
+        {errors.name?.message && ( <p className="pError" aria-label="error"> {errors.name.message} </p> )}
 
         <div className="divLabelAndInput">
           <label>E-mail:</label>
-          <input
-            defaultValue={currentClient?.email}
-            placeholder="Type here your password"
-            {...register("email")}
-          />
+          <input defaultValue={currentClient?.email} placeholder="Type here your password" {...register("email")} />
         </div>
-        {errors.email?.message && (
-          <p className="pError" aria-label="error">
-            {errors.email.message}
-          </p>
-        )}
+        {errors.email?.message && ( <p className="pError" aria-label="error"> {errors.email.message} </p> )}
 
         <div className="divLabelAndInput">
           <label>Phone:</label>
-          <input
-            defaultValue={currentClient?.phone}
-            placeholder="Type here your password"
-            {...register("phone")}
-          />
+          <input defaultValue={currentClient?.phone} placeholder="Type here your password" {...register("phone")} />
         </div>
-        {errors.phone?.message && (
-          <p className="pError" aria-label="error">
-            {errors.phone.message}
-          </p>
-        )}
+        {errors.phone?.message && ( <p className="pError" aria-label="error"> {errors.phone.message} </p> )}
 
         <ul>
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              gap: "5px",
-            }}
-          >
+          <div style={{ display: "flex", justifyContent: "space-between", gap: "5px" }}>
             <h3>Contacts:</h3>
-            <button
-              style={{
-                border: "2pt solid #1a5f70",
-                backgroundColor: "#1a5f70",
-                color: "white",
-                textShadow: "1px 1px 5px black",
-              }}
-              onClick={() => {
-                ShowAddClientContactForm();
-                ShowClientDetailsForm(currentClient.id);
-              }}
-            >
+
+            <button style={{border: "2pt solid #1a5f70",backgroundColor: "#1a5f70", color: "white",textShadow: "1px 1px 5px black" }}
+              onClick={() => { ShowAddClientContactForm(); ShowClientDetailsForm(currentClient.id) }}>
               Add new contact
             </button>
+
           </div>
 
           {currentClientContacts?.map((contact: any) => {
@@ -303,30 +254,18 @@ const ClientDetailsForm = () => {
                   <p>{contact.email}</p>
                   <p>Registered since: {contact.createdAt}</p>
 
-                  <div
-                    style={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                      width: "50%",
-                    }}
-                  >
-                    <p
-                      onClick={() => {
-                        ShowEditClientContactForm(contact.id);
-                        ShowClientDetailsForm(currentClientId);
-                      }}
-                    >
+                  <div style={{display: "flex", justifyContent: "space-between", width: "50%"}}>
+
+                    <p style={{cursor: "pointer"}}onClick={() => { ShowEditClientContactForm(contact.id); ShowClientDetailsForm(currentClientId) }}>
                       Edit
                     </p>
-                    <p
-                      style={{ color: "red" }}
-                      onClick={() => {
-                        deleteContact(contact.id);
-                      }}
-                    >
+
+                    <p style={{ color: "red" , cursor: "pointer"}} onClick={() => {deleteContact(contact.id)}}>
                       Delete
                     </p>
+
                   </div>
+
                 </li>
               );
             }
@@ -334,66 +273,40 @@ const ClientDetailsForm = () => {
         </ul>
 
         <ul>
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              gap: "5px",
-            }}
-          >
+          <div style={{ display: "flex", justifyContent: "space-between", gap: "5px" }}>
             <h3>Conversions:</h3>
-            <button
-              style={{
-                border: "2pt solid #1a5f70",
-                backgroundColor: "#1a5f70",
-                color: "white",
-                textShadow: "1px 1px 5px black",
-              }}
-              onClick={() => {
-                ShowAddConversionForm();
-                ShowClientDetailsForm(currentClient.id);
-              }}
-            >
+
+            <button style={{ border: "2pt solid #1a5f70", backgroundColor: "#1a5f70", color: "white", textShadow: "1px 1px 5px black"}}
+              onClick={() => {ShowAddConversionForm(); ShowClientDetailsForm(currentClient.id) }} >
               New Conversion Process
             </button>
+
           </div>
 
           {currentClientConversions?.map((conversion: any) => {
             if (conversion.client.id === currentClientId) {
               return (
+
                 <li key={conversion.id}>
-                  {/* <h4>{}</h4> */}
+
                   <p>$ {conversion.value}</p>
-                  {/* <p style={{ color: "orange", fontWeight: "bold" }}>
-                    In Progress...
-                  </p> */}
+
                   <p style={{ fontSize: "10pt" }}>
                     Process Started {conversion.createdAt}
                   </p>
+
                   <p>{conversion.details}</p>
-                  <div
-                    style={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                      width: "50%",
-                    }}
-                  >
-                    <button
-                      onClick={() => {
-                        ShowEditConversionForm(conversion.id);
-                        ShowClientDetailsForm(currentClientId);
-                      }}
-                    >
+
+                  <div style={{ display: "flex", justifyContent: "space-between", width: "50%" }}>
+
+                    <p style={{cursor: "pointer"}} onClick={() => { ShowEditConversionForm(conversion.id); ShowClientDetailsForm(currentClientId) }}>
                       Edit
-                    </button>
-                    <p
-                      style={{ color: "red" }}
-                      onClick={() => {
-                        deleteConversion(conversion.id);
-                      }}
-                    >
+                    </p>
+
+                    <p style={{ color: "red" , cursor: "pointer"}} onClick={() => { deleteConversion(conversion.id) }}>
                       Delete
                     </p>
+                    
                   </div>
                 </li>
               );

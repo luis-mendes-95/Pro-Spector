@@ -1,42 +1,11 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext } from "react";
 import { DashboardBackground } from "../../../styles/main";
 import { DashboardContext } from "../../../contexts/dashboard";
-import AddClientForm from "../../forms/addClientForm";
-import api from "../../../services/api";
 import { iClient } from "../../../interfaces/client";
 
 const ContactsDashboard = () => {
   
-  const {
-    ShowContactsDashboard,
-    ShowDashboardHome,
-    showContactsDashboard,
-    showDashboardHome,
-
-    logout,
-
-    ShowAddClientForm,
-    ShowClientDetailsForm,
-    showAddClientForm,
-    showClientDetailsForm,
-
-    currentClientId,
-    currentClient,
-    SetClient,
-    SetClientId,
-
-    clients,
-    contacts,
-    conversions,
-    setClientsByRequest
-    
-    
-  } = useContext(DashboardContext);
-
-  useEffect(() => {
-    
-  }, [clients])
-  
+  const { ShowAddClientForm, ShowClientDetailsForm, SetClient, SetClientId, clients } = useContext(DashboardContext);
 
   return (
     <DashboardBackground>
@@ -56,7 +25,7 @@ const ContactsDashboard = () => {
 
         <tbody>
 
-          {clients?.map((client: any) => {
+          {clients?.map((client: iClient) => {
             return (
               <tr key={client.id}>
                 <td>{client.name}</td>

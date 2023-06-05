@@ -5,8 +5,6 @@ import Main from "../../components/main";
 import LoginForm from "../../components/forms/loginForm";
 import RegisterForm from "../../components/forms/registerForm";
 import { HomeContext } from "../../contexts/home";
-import { toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 import api from "../../services/api";
 import { useNavigate } from "react-router-dom";
 

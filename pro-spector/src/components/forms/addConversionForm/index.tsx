@@ -8,18 +8,13 @@ import { iConversion } from "../../../interfaces/conversion";
 import "react-toastify/dist/ReactToastify.css";
 import { ConversionSchema } from "../../../schemas/conversion";
 import { DashboardContext } from "../../../contexts/dashboard";
-import { useNavigate } from "react-router-dom";
 import api from "../../../services/api";
 
 const AddConversionForm = () => {
   
   const { currentClientId, ShowAddConversionForm, ShowClientDetailsForm } = useContext(DashboardContext);
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<iConversion>({ resolver: yupResolver(ConversionSchema) });
+  const { register, handleSubmit, formState: { errors } } = useForm<iConversion>({ resolver: yupResolver(ConversionSchema) });
 
   const submit = async (data: iConversion) => {
 
@@ -64,19 +59,6 @@ const AddConversionForm = () => {
       <FormStyle onSubmit={handleSubmit(submit)}>
         <h2>ADD NEW CONVERSION PROCESS:</h2>
 
-        {/* <div className="divLabelAndInput">
-          <label>Title:</label>
-          <input
-            placeholder="Choose a title for this process"
-            {...register("title")}
-          />
-        </div>
-        {errors.title?.message && (
-          <p className="pError" aria-label="error">
-            {errors.title.message}
-          </p>
-        )} */}
-
         <div className="divLabelAndInput">
           <label>Value:</label>
           <input placeholder="Type the value in negotiation" type="number" {...register("value")} />
@@ -96,16 +78,6 @@ const AddConversionForm = () => {
             {errors.details.message}
           </p>
         )}
-
-        {/* <div className="divLabelAndInput">
-          <label>Sucess:</label>
-          <input {...register("sucess")} type="checkbox" />
-        </div>
-        {errors.sucess?.message && (
-          <p className="pError" aria-label="error">
-            {errors.sucess.message}
-          </p>
-        )} */}
 
         <div className="DivButtonsReg">
           <button type="submit" className="buttonSaveReg">
