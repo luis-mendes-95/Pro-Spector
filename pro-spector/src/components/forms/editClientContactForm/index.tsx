@@ -101,7 +101,7 @@ const EditClientContactForm = () => {
           <label>Complete Name:</label>
           <input
             defaultValue={currentContact?.name}
-            placeholder="Type here your username"
+            placeholder="Type here contact's full name"
             {...register("name")}
           />
         </div>
@@ -115,7 +115,7 @@ const EditClientContactForm = () => {
           <label>E-mail:</label>
           <input
             defaultValue={currentContact?.email}
-            placeholder="Type here your password"
+            placeholder="Type here contact's e-mail"
             {...register("email")}
           />
         </div>
@@ -125,11 +125,11 @@ const EditClientContactForm = () => {
           </p>
         )}
 
-        {/* <div className="divLabelAndInput">
+        <div className="divLabelAndInput">
           <label>Phone:</label>
           <input
             defaultValue={currentContact?.phone}
-            placeholder="Type here your password"
+            placeholder="Type here contact's phone"
             {...register("phone")}
           />
         </div>
@@ -137,7 +137,7 @@ const EditClientContactForm = () => {
           <p className="pError" aria-label="error">
             {errors.phone.message}
           </p>
-        )} */}
+        )}
 
         <div className="DivButtonsReg">
           <button type="submit" className="buttonSaveReg">
