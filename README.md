@@ -24,5 +24,5 @@ Pro-Spector is a prospectation app that helps sellers to manage their contacts a
 # Add new Conversion:
 10) You can also add a new conversion when a sale is done, by clicking on "Add new conversion"
 
-# Editting and deleting:
+# Editing and deleting:
 12) And to edit all the informations, there is no secret! The cards created when registered has the buttons to edit and delete the informations. 
